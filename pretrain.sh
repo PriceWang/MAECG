@@ -1,0 +1,11 @@
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_pretrain.py \
+--model mae_vit_tiny_patch4 \
+--batch_size 512 \
+--lr 3e-4 \
+--epochs 400 \
+--mask_ratio 0.6 \
+--data_path /home/guoxin/storage/ssd/public/unsupervisedecg/cinc2021_unlabelled/ \
+--output_dir ./pretrains/output/mae_vit_tiny_patch4_mask60 \
+--log_dir ./pretrains/log/mae_vit_tiny_patch4_mask60 \
+--num_workers 20 \
+--norm_pix_loss \

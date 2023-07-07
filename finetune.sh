@@ -1,0 +1,11 @@
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+--model vit_tiny_p4 \
+--batch_size 1024 \
+--lr 3e-4 \
+--epochs 200 \
+--mixup 0.5 \
+--finetune /home/guoxin/mae/pretrains/output/mae_vit_tiny_patch4_mask60/checkpoint-199.pth \
+--output_dir ./finetunes/output/vit_tiny_p4 \
+--log_dir ./finetunes/log/vit_tiny_p4 \
+--num_workers 20 \
+--incart
