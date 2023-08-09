@@ -1,10 +1,42 @@
-OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
---model vit_tiny_p4 \
---batch_size 1024 \
---finetune /home/guoxin/mae/pretrains/output/mae_vit_tiny_patch4_mask60/checkpoint-199.pth \
---output_dir ./finetunes/output/vit_tiny_p4_incart \
---log_dir ./finetunes/log/vit_tiny_p4_incart \
---resume /home/guoxin/mae/finetunes/output/vit_tiny_p4_incart/checkpoint-max_acc.pth \
---num_workers 20 \
---eval \
+###
+# @Author: Guoxin Wang
+# @Date: 2023-07-05 16:39:56
+ # @LastEditors: Guoxin Wang
+ # @LastEditTime: 2023-08-04 17:00:05
+ # @FilePath: /mae/evaluation.sh
+# @Description:
+#
+# Copyright (c) 2023 by Guoxin Wang, All Rights Reserved.
+###
 
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_small_p4 \
+    --batch_size 1024 \
+    --resume /home/guoxin/mae/finetunes/af_beat/output/vit_small_p4_m60_ep200_bs512/checkpoint-max_acc.pth \
+    --test_path /home/guoxin/storage/ssd/public/guoxin/mitdb/af_beat_test.pth \
+    --num_workers 20 \
+    --eval
+
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_small_p4 \
+    --batch_size 1024 \
+    --resume /home/guoxin/mae/superviseds/af_beat/output/vit_small_p4_m60_ep200_bs512/checkpoint-max_acc.pth \
+    --test_path /home/guoxin/storage/ssd/public/guoxin/mitdb/af_beat_test.pth \
+    --num_workers 20 \
+    --eval
+
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_small_p4 \
+    --batch_size 1024 \
+    --resume /home/guoxin/mae/finetunes/au_beat/output/vit_small_p4_m60_ep200_bs16/checkpoint-max_acc.pth \
+    --test_path /home/guoxin/storage/ssd/public/guoxin/ecgiddb/au_beat_test.pth \
+    --num_workers 20 \
+    --eval
+
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_small_p4 \
+    --batch_size 1024 \
+    --resume /home/guoxin/mae/superviseds/au_beat/output/vit_small_p4_m60_ep200_bs16/checkpoint-max_acc.pth \
+    --test_path /home/guoxin/storage/ssd/public/guoxin/ecgiddb/au_beat_test.pth \
+    --num_workers 20 \
+    --eval

@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2023-07-03 16:08:08
-FilePath: /mae/util/data_utils.py
+LastEditTime: 2023-07-23 17:49:07
+FilePath: /mae/utils/data_utils.py
 Description: 
 
 Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
@@ -16,8 +16,10 @@ from torch.utils.data import (
 )
 from collections import Counter
 from multiprocessing import Pool
+from sklearn import preprocessing
 import neurokit2 as nk
 import numpy as np
+import os
 import wfdb
 import torch
 import warnings
@@ -86,55 +88,6 @@ BEAT_LABEL_2 = {
     "/": 1,
     "Q": 1,
 }
-
-
-class Mixup(object):
-    def __init__(self, alpha: float = 0.1, device: str = "cpu") -> None:
-        self.alpha = alpha
-        self.device = device
-
-    def __call__(self, data: torch.Tensor, target: torch.Tensor) -> tuple:
-        gamma = np.random.beta(self.alpha, self.alpha)
-        indices = torch.randperm(data.size(0), device=self.device, dtype=torch.long)
-        return self.partial_mixup(data, gamma, indices), self.partial_mixup(
-            target, gamma, indices
-        )
-
-    def partial_mixup(
-        self, input: torch.Tensor, gamma: float, indices: torch.Tensor
-    ) -> torch.Tensor:
-        if input.size(0) != indices.size(0):
-            raise RuntimeError("Size mismatch!")
-        perm_input = input[indices]
-        return input.mul(gamma).add(perm_input, alpha=1 - gamma)
-
-
-# def random_masking(x, mask_size, mask_ratio):
-#     """
-#     Perform per-sample random masking by per-sample shuffling.
-#     Per-sample shuffling is done by argsort random noise.
-#     x: [N, L, D], sequence
-#     """
-#     L = x.shape[0]  # batch, length, dim
-#     len_keep = int(L * (1 - mask_ratio))
-
-#     noise = 0.05 * torch.rand(L, device=x.device)  # noise in [0, 1]
-
-#     # sort noise for each sample
-#     ids_shuffle = torch.argsort(noise)  # ascend: small is keep, large is remove
-#     ids_restore = torch.argsort(ids_shuffle)
-
-#     # keep the first subset
-#     ids_keep = ids_shuffle[:len_keep]
-#     x_masked = torch.gather(x, dim=0, index=ids_keep.repeat(1))
-
-#     # generate the binary mask: 0 is keep, 1 is remove
-#     mask = torch.ones(L, device=x.device)
-#     mask[:len_keep] = 0
-#     # unshuffle to get the binary mask
-#     mask = torch.gather(mask, dim=0, index=ids_restore)
-
-#     return x_masked, mask, ids_restore
 
 
 class RandomCrop(object):
@@ -234,7 +187,7 @@ class RandomNoise(object):
         return data
 
 
-class ECG_Beat_L(Dataset):
+class ECG_Beat_AF(Dataset):
     def __init__(
         self,
         files: list,
@@ -246,6 +199,7 @@ class ECG_Beat_L(Dataset):
     ) -> None:
         self.transform = transform
         self.expansion = expansion
+        self.numclasses = numclasses
         if numclasses == 5:
             self.LABEL = BEAT_LABEL_5
         elif numclasses == 4:
@@ -274,12 +228,8 @@ class ECG_Beat_L(Dataset):
             self.labels.extend(label)
         self.datas = np.array(self.datas)
         self.labels = np.array(self.labels)
-        self.datas = torch.tensor(
-            self.datas, dtype=torch.float
-        )
-        self.labels = torch.tensor(
-            self.labels, dtype=torch.long
-        )
+        self.datas = torch.tensor(self.datas, dtype=torch.float)
+        self.labels = torch.tensor(self.labels, dtype=torch.long)
 
     def __len__(self) -> int:
         return len(self.datas) * self.expansion
@@ -354,9 +304,7 @@ class ECG_Beat_UL(Dataset):
             data = temp.get()
             self.datas.extend(data)
         self.datas = np.array(self.datas)
-        self.datas = torch.tensor(
-            self.datas, dtype=torch.float
-        )
+        self.datas = torch.tensor(self.datas, dtype=torch.float)
 
     def __len__(self) -> int:
         return len(self.datas) * self.expansion
@@ -397,6 +345,200 @@ class ECG_Beat_UL(Dataset):
         except:
             print("Unvailable Record: {}".format(path))
         return data
+
+
+class ECG_Beat_AU(Dataset):
+    def __init__(
+        self,
+        folders: list,
+        width: int,
+        channel_names: list,
+        expansion: int,
+        transform: object = None,
+    ) -> None:
+        self.transform = transform
+        self.expansion = expansion
+        self.numclasses = len(folders)
+        self.datas = []
+        self.labels = []
+        pool = Pool()
+        pooltemp = []
+        for folder in folders:
+            res = pool.apply_async(
+                self.get_labeled_datas,
+                args=(
+                    folder,
+                    width,
+                    channel_names,
+                ),
+            )
+            pooltemp.append(res)
+        pool.close()
+        pool.join()
+        for temp in pooltemp:
+            data, label = temp.get()
+            self.datas.extend(data)
+            self.labels.extend(label)
+        self.datas = np.array(self.datas)
+        self.labels = np.array(self.labels)
+        self.datas = torch.tensor(self.datas, dtype=torch.float)
+        le = preprocessing.LabelEncoder()
+        self.labels = le.fit_transform(self.labels)
+        self.labels = torch.tensor(self.labels, dtype=torch.long)
+
+    def __len__(self) -> int:
+        return len(self.datas) * self.expansion
+
+    def __getitem__(self, index: int) -> tuple:
+        index = index // self.expansion
+        data = self.datas[index]
+        label = self.labels[index]
+        if self.transform:
+            data = self.transform(data)
+        data = data.unsqueeze(0)
+        return data, label
+
+    def get_labeled_datas(self, folder: str, width, channel_names: list = None):
+        files = np.array(
+            [
+                os.path.join(folder, file_name.split(".")[0])
+                for file_name in os.listdir(folder)
+                if file_name.endswith(".hea")
+            ]
+        )
+        data = []
+        label = []
+        for file in files:
+            try:
+                record = wfdb.rdrecord(file, channel_names=channel_names)
+                for channel in range(record.p_signal.shape[1]):
+                    p_signal = record.p_signal[:, channel]
+                    p_signal = processing.resample_sig(
+                        p_signal, record.__dict__["fs"], 360
+                    )[0]
+                    p_signal = nk.ecg_clean(p_signal, sampling_rate=360)
+                    _, rpeaks = nk.ecg_peaks(p_signal, sampling_rate=360)
+                    for i in range(len(rpeaks["ECG_R_Peaks"])):
+                        if (
+                            rpeaks["ECG_R_Peaks"][i] - width < 0
+                            or rpeaks["ECG_R_Peaks"][i] + width > len(p_signal) - 1
+                        ):
+                            continue
+                        start_idx = rpeaks["ECG_R_Peaks"][i] - width
+                        end_idx = rpeaks["ECG_R_Peaks"][i] + width
+                        sig = p_signal[start_idx:end_idx]
+                        sig = processing.normalize_bound(sig, -1, 1)
+                        data.append(sig)
+                        label.append(folder)
+            except:
+                print("Unvailable Record: {}".format(folder))
+        return data, label
+
+    def get_labels(self) -> list:
+        return self.labels.tolist()
+
+
+class ECG_Beat_DN(Dataset):
+    def __init__(
+        self,
+        folders: list,
+        width: int,
+        channel_names_wn: list,
+        channel_names_won: list,
+        expansion: int,
+        transform: object = None,
+    ) -> None:
+        self.transform = transform
+        self.expansion = expansion
+        self.numclasses = len(folders)
+        self.datas_wn = []
+        self.datas_won = []
+        pool = Pool()
+        pooltemp = []
+        for folder in folders:
+            res = pool.apply_async(
+                self.get_datas,
+                args=(
+                    folder,
+                    width,
+                    channel_names_wn,
+                    channel_names_won,
+                ),
+            )
+            pooltemp.append(res)
+        pool.close()
+        pool.join()
+        for temp in pooltemp:
+            data_wn, data_won = temp.get()
+            self.datas_wn.extend(data_wn)
+            self.datas_won.extend(data_won)
+        self.datas_wn = np.array(self.datas_wn)
+        self.datas_won = np.array(self.datas_won)
+        self.datas_wn = torch.tensor(self.datas_wn, dtype=torch.float)
+        self.datas_won = torch.tensor(self.datas_won, dtype=torch.float)
+
+    def __len__(self) -> int:
+        return len(self.datas_wn) * self.expansion
+
+    def __getitem__(self, index: int) -> tuple:
+        index = index // self.expansion
+        data_wn = self.datas_wn[index]
+        data_won = self.datas_won[index]
+        if self.transform:
+            data_wn = self.transform(data_wn)
+        data_wn = data_wn.unsqueeze(0)
+        data_won = data_won.unsqueeze(0)
+        return data_wn, data_won
+
+    def get_datas(
+        self,
+        folder: str,
+        width,
+        channel_names_wn: list = None,
+        channel_names_won: list = None,
+    ):
+        files = np.array(
+            [
+                os.path.join(folder, file_name.split(".")[0])
+                for file_name in os.listdir(folder)
+                if file_name.endswith(".hea")
+            ]
+        )
+        data_won = []
+        data_wn = []
+        for file in files:
+            try:
+                record_won = wfdb.rdrecord(file, channel_names=channel_names_won)
+                record_wn = wfdb.rdrecord(file, channel_names=channel_names_wn)
+                for channel in range(record_won.p_signal.shape[1]):
+                    p_signal_won = record_won.p_signal[:, channel]
+                    p_signal_won = processing.resample_sig(
+                        p_signal_won, record_won.__dict__["fs"], 360
+                    )[0]
+                    p_signal_won = nk.ecg_clean(p_signal_won, sampling_rate=360)
+                    p_signal_wn = record_wn.p_signal[:, channel]
+                    p_signal_wn = processing.resample_sig(
+                        p_signal_wn, record_wn.__dict__["fs"], 360
+                    )[0]
+                    # p_signal_wn = nk.ecg_clean(p_signal_wn, sampling_rate=360)
+                    _, rpeaks = nk.ecg_peaks(p_signal_won, sampling_rate=360)
+                    for i in range(len(rpeaks["ECG_R_Peaks"])):
+                        if (
+                            rpeaks["ECG_R_Peaks"][i] - width < 0
+                            or rpeaks["ECG_R_Peaks"][i] + width > len(p_signal_won) - 1
+                        ):
+                            continue
+                        start_idx = rpeaks["ECG_R_Peaks"][i] - width
+                        end_idx = rpeaks["ECG_R_Peaks"][i] + width
+                        sig_won = p_signal_won[start_idx:end_idx]
+                        sig_won = processing.normalize_bound(sig_won, -1, 1)
+                        sig_wn = p_signal_wn[start_idx:end_idx]
+                        sig_wn = processing.normalize_bound(sig_wn, -1, 1)
+                        data_won.append(sig_won)
+                        data_wn.append(sig_wn)
+            except:
+                print("Unvailable Record: {}".format(folder))
+        return data_wn, data_won
 
 
 class ImbalancedSampler(Sampler):

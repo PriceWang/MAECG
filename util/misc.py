@@ -337,8 +337,8 @@ def save_model(args, epoch, model, model_without_ddp, optimizer, loss_scaler, ma
 
 
 def load_model(args, model_without_ddp, optimizer, loss_scaler):
-    output_dir = Path(args.output_dir)
     if args.auto_resume and len(args.resume) == 0:
+        output_dir = Path(args.output_dir)
         import glob
         all_checkpoints = glob.glob(os.path.join(output_dir, 'checkpoint-*.pth'))
         latest_ckpt = -1
