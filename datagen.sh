@@ -2,7 +2,7 @@
 # @Author: Guoxin Wang
 # @Date: 2023-07-07 16:52:35
  # @LastEditors: Guoxin Wang
- # @LastEditTime: 2023-07-23 17:39:10
+ # @LastEditTime: 2023-10-09 20:48:14
  # @FilePath: /mae/datagen.sh
 # @Description:
 #
@@ -18,6 +18,16 @@
 #     --numclasses 5 \
 #     --expansion 1 \
 #     --mitdb
+
+python dataprocess.py \
+    --task af_beat_intra \
+    --data_path ../storage/ssd/public/unsupervisedecg/physionet.org/files/mitdb/1.0.0 \
+    --output_dir ../storage/ssd/public/guoxin/mitdb \
+    --width 240 \
+    --channel_names MLII \
+    --numclasses 5 \
+    --expansion 1 \
+    --mitdb
 
 # python dataprocess.py \
 #     --task af_beat \
@@ -45,12 +55,12 @@
 #     --channel_names "ECG I filtered" \
 #     --expansion 1
 
-python dataprocess.py \
-    --task dn_beat \
-    --data_path ../storage/ssd/public/unsupervisedecg/physionet.org/files/ecgiddb/1.0.0 \
-    --prefix Person \
-    --output_dir ../storage/ssd/public/guoxin/ecgiddb \
-    --width 240 \
-    --channel_names "ECG I filtered" \
-    --channel_names_wn "ECG I" \
-    --expansion 1
+# python dataprocess.py \
+#     --task dn_beat \
+#     --data_path ../storage/ssd/public/unsupervisedecg/physionet.org/files/ecgiddb/1.0.0 \
+#     --prefix Person \
+#     --output_dir ../storage/ssd/public/guoxin/ecgiddb \
+#     --width 240 \
+#     --channel_names "ECG I filtered" \
+#     --channel_names_wn "ECG I" \
+#     --expansion 1

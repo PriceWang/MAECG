@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2023-07-24 17:56:49
+LastEditTime: 2023-10-09 20:49:50
 FilePath: /mae/dataprocess.py
 Description: 
 
@@ -22,7 +22,7 @@ parser.add_argument(
     "--task",
     required=True,
     type=str,
-    choices=["ul_beat", "af_beat", "au_beat", "dn_beat"],
+    choices=["ul_beat", "af_beat", "af_beat_intra", "au_beat", "dn_beat"],
     help="target task",
 )
 parser.add_argument(
@@ -225,6 +225,90 @@ def af_beat() -> None:
         )
 
 
+def af_beat_intra() -> None:
+    logger.info("Data Generating for Task {}".format(args.task))
+    if args.mitdb:
+        DS = [
+            101,
+            101,
+            106,
+            108,
+            109,
+            112,
+            114,
+            115,
+            116,
+            118,
+            119,
+            122,
+            124,
+            201,
+            203,
+            205,
+            207,
+            208,
+            209,
+            215,
+            220,
+            223,
+            230,
+            100,
+            103,
+            105,
+            111,
+            113,
+            117,
+            121,
+            123,
+            200,
+            202,
+            210,
+            212,
+            213,
+            214,
+            219,
+            221,
+            222,
+            228,
+            231,
+            232,
+            233,
+            234,
+        ]
+        files = np.array(
+            [
+                os.path.join(
+                    args.data_path,
+                    str(file_name),
+                )
+                for file_name in DS
+            ]
+        )
+        dataset = ECG_Beat_AF(
+            files=files,
+            width=args.width,
+            channel_names=args.channel_names,
+            expansion=args.expansion,
+            numclasses=args.numclasses,
+        )
+        test_size = int(0.3 * len(dataset))
+        [train_set, valid_set, test_set] = random_split(
+            dataset, [len(dataset) - test_size * 2, test_size, test_size]
+        )
+        torch.save(
+            train_set,
+            "{}/{}_train.pth".format(args.output_dir, args.task),
+        )
+        torch.save(
+            valid_set,
+            "{}/{}_valid.pth".format(args.output_dir, args.task),
+        )
+        torch.save(
+            test_set,
+            "{}/{}_test.pth".format(args.output_dir, args.task),
+        )
+
+
 def au_beat() -> None:
     logger.info("Data Generating for Task {}".format(args.task))
     folders = [
@@ -291,6 +375,8 @@ def main() -> None:
         ul_beat()
     elif args.task == "af_beat":
         af_beat()
+    elif args.task == "af_beat_intra":
+        af_beat_intra()
     elif args.task == "au_beat":
         au_beat()
     elif args.task == "dn_beat":
