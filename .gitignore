@@ -1,10 +1,10 @@
 /__pycache__
 */__pycache__/*
+
 /pretrains
 /finetunes
 /superviseds
-/checkpoint-160.pth
-*/test*.*
-/test*.*
-*/test*/
 /test*/
+
+/*.sh
+/test*.*
