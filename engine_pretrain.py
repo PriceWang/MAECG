@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2023-07-30 13:18:39
+LastEditTime: 2024-01-05 15:12:32
 FilePath: /mae/engine_pretrain.py
 Description: 
 
@@ -41,7 +41,7 @@ def train_one_epoch(
     if log_writer is not None:
         print("log_dir: {}".format(log_writer.log_dir))
 
-    for data_iter_step, (samples,) in enumerate(
+    for data_iter_step, samples in enumerate(
         metric_logger.log_every(data_loader, print_freq, header)
     ):
 

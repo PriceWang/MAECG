@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2023-07-30 13:18:26
+LastEditTime: 2024-01-05 13:34:41
 FilePath: /mae/main_pretrain.py
 Description: 
 
@@ -108,7 +108,10 @@ def get_args_parser():
     # Dataset parameters
     parser.add_argument(
         "--data_path",
-        default="/home/guoxin/storage/ssd/public/unsupervisedecg/cinc2021_unlabelled/",
+        default=[
+            "/home/guoxin/storage/ssd/public/unsupervisedecg/cinc2021_unlabelled/"
+        ],
+        nargs="+",
         type=str,
         help="dataset path",
     )
@@ -172,7 +175,7 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = processedPreTrainDataset([args.data_path])
+    dataset_train = processedPreTrainDataset(args.data_path)
     print(f"len of the dataset {len(dataset_train)}")
 
     if True:  # args.distributed:

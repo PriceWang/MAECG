@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2023-07-23 17:49:07
+LastEditTime: 2024-01-05 14:03:22
 FilePath: /mae/utils/data_utils.py
 Description: 
 
@@ -312,12 +312,15 @@ class ECG_Beat_UL(Dataset):
     def __getitem__(self, index: int) -> list:
         index = index // self.expansion
         data = self.datas[index]
+        # if self.transform:
+        #     data = [self.transform(data), self.transform(data)]
+        # else:
+        #     data = [data, data]
+        # data[0] = data[0].unsqueeze(0)
+        # data[1] = data[1].unsqueeze(0)
+
         if self.transform:
-            data = [self.transform(data), self.transform(data)]
-        else:
-            data = [data, data]
-        data[0] = data[0].unsqueeze(0)
-        data[1] = data[1].unsqueeze(0)
+            data = self.transform(data)
         return data
 
     def get_unlabeled_datas(self, path: str, width: int, channel_names: list = None):
