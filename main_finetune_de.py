@@ -33,7 +33,7 @@ from util.pos_embed import interpolate_pos_embed
 from util.misc import NativeScalerWithGradNormCount as NativeScaler
 import vit_mae
 
-from engine_finetune_dn import train_one_epoch
+from mae.engine_finetune_de import train_one_epoch
 
 
 def get_args_parser():

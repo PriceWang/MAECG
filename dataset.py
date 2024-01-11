@@ -54,7 +54,7 @@ def processedPreTrainDataset(directories):
     records = {}
     for part_path in tqdm(part_list, desc='Loading dataset'):
         part = torch.load(part_path)
-        records[part_path] = TensorDataset(part['data'].float())
+        records[part_path] = part
     return ConcatDataset(records.values())
 
 def preTrainDataset2(file, cuda=False):
