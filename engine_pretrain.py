@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-05 15:12:32
+LastEditTime: 2024-01-15 14:48:22
 FilePath: /mae/engine_pretrain.py
 Description: 
 
@@ -14,8 +14,8 @@ from typing import Iterable
 
 import torch
 
-import util.misc as misc
-import util.lr_sched as lr_sched
+import utils.misc as misc
+import utils.lr_sched as lr_sched
 
 
 def train_one_epoch(
@@ -44,7 +44,6 @@ def train_one_epoch(
     for data_iter_step, samples in enumerate(
         metric_logger.log_every(data_loader, print_freq, header)
     ):
-
         # we use a per iteration (instead of per epoch) lr scheduler
         if data_iter_step % accum_iter == 0:
             lr_sched.adjust_learning_rate(

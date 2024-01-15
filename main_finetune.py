@@ -28,12 +28,11 @@ from timm.models.layers import trunc_normal_
 from timm.data.mixup import Mixup
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
-import util.lr_decay as lrd
-import util.misc as misc
+import utils.lr_decay as lrd
+import utils.misc as misc
 
-# from util.datasets import build_dataset
-from util.pos_embed import interpolate_pos_embed
-from util.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.pos_embed import interpolate_pos_embed
+from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 
 import vit_mae
 
@@ -287,9 +286,6 @@ def main(args):
     np.random.seed(seed)
 
     cudnn.benchmark = True
-
-    # dataset_train = build_dataset(is_train=True, args=args)
-    # dataset_val = build_dataset(is_train=False, args=args)
 
     dataset_train = [torch.load(dataset) for dataset in args.train_path]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)

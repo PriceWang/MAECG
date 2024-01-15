@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-11 16:37:28
+LastEditTime: 2024-01-15 14:48:07
 FilePath: /mae/dataprocess.py
 Description: 
 
@@ -15,7 +15,7 @@ import logging
 import numpy as np
 from pathlib import Path
 from torch.utils.data import random_split
-from util.data_utils import *
+from utils.data_utils import *
 
 parser = argparse.ArgumentParser(description="Data Processing")
 parser.add_argument(

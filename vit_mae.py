@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from timm.models.vision_transformer import Block
 
-from util.pos_embed import get_1d_sincos_pos_embed
+from utils.pos_embed import get_1d_sincos_pos_embed
 
 __all__ = [
     "ViT1D",

@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-05 14:03:22
-FilePath: /mae/utils/data_utils.py
+LastEditTime: 2024-01-11 16:45:17
+FilePath: /mae/util/data_utils.py
 Description: 
 
 Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
@@ -22,6 +22,7 @@ import numpy as np
 import os
 import wfdb
 import torch
+import tqdm
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -88,6 +89,27 @@ BEAT_LABEL_2 = {
     "/": 1,
     "Q": 1,
 }
+
+
+def processedPreTrainDataset(directories):
+    # Lead 2 only, for Guoxin's work in 2023 Mar
+    part_list = []
+    for directory in directories:
+        part_list.extend(
+            list(
+                filter(
+                    lambda x: x.endswith(".pth"),
+                    map(lambda x: os.path.join(directory, x), os.listdir(directory)),
+                )
+            )
+        )
+    # part_list=[part_list[0]]
+
+    records = {}
+    for part_path in tqdm(part_list, desc="Loading dataset"):
+        part = torch.load(part_path)
+        records[part_path] = part
+    return ConcatDataset(records.values())
 
 
 class RandomCrop(object):

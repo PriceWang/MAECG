@@ -25,15 +25,14 @@ import timm
 
 # assert timm.__version__ == "0.3.2" # version check
 
-import util.lr_decay as lrd
-import util.misc as misc
+import utils.lr_decay as lrd
+import utils.misc as misc
 
-# from util.datasets import build_dataset
-from util.pos_embed import interpolate_pos_embed
-from util.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.pos_embed import interpolate_pos_embed
+from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 import vit_mae
 
-from mae.engine_finetune_de import train_one_epoch
+from engine_finetune_de import train_one_epoch
 
 
 def get_args_parser():
@@ -248,8 +247,6 @@ def main(args):
     np.random.seed(seed)
 
     cudnn.benchmark = True
-
-    # dataset_train = build_dataset(is_train=True, args=args)
 
     dataset_train = torch.load(args.train_path)
     if args.extra_train:

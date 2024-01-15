@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-05 13:34:41
+LastEditTime: 2024-01-15 14:48:42
 FilePath: /mae/main_pretrain.py
 Description: 
 
@@ -15,7 +15,7 @@ import numpy as np
 import os
 import time
 from pathlib import Path
-from dataset import processedPreTrainDataset
+from utils.data_utils import processedPreTrainDataset
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -26,9 +26,9 @@ import timm
 # assert timm.__version__ == "0.3.2"  # version check
 import timm.optim.optim_factory as optim_factory
 
-import util.misc as misc
-from util.misc import NativeScalerWithGradNormCount as NativeScaler
-from util.misc import str2bool
+import utils.misc as misc
+from utils.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.misc import str2bool
 
 import vit_mae
 
