@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-16 16:13:59
+ * @LastEditTime: 2024-01-16 16:15:03
  * @FilePath: /mae/readme.md
  * @Description: 
  * 
@@ -291,19 +291,6 @@ This should give:
 * Acc@1 100.000 Acc@3 100.000 loss 0.188
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Results
 
 By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in the paper):
@@ -312,7 +299,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <tr>
-<td colspan="5"><font size="1"><em>following are the results of different models, a patch size of 32 and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
+<td colspan="7"><font size="1"><em>following are the results of different models, a patch size of 32 and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
 </tr>
 <th style="text-align:center"></th>
 <th style="text-align:center">ViT-Atto</th>
@@ -344,7 +331,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <tr>
-<td colspan="5"><font size="1"><em>following are the results of different patch sizes, a ViT-Base model and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
+<td colspan="7"><font size="1"><em>following are the results of different patch sizes, a ViT-Base model and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
 </tr>
 <th style="text-align:center"></th>
 <th style="text-align:center">2</th>
@@ -376,7 +363,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <tr>
-<td colspan="5"><font size="1"><em>following are the results of different mask ratios, a ViT-Base model and a patch size of 32 for the pre-trained MAECG:</em></font></td>
+<td colspan="10"><font size="1"><em>following are the results of different mask ratios, a ViT-Base model and a patch size of 32 for the pre-trained MAECG:</em></font></td>
 </tr>
 <th style="text-align:center"></th>
 <th style="text-align:center">0.1</th>
