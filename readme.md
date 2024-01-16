@@ -2,15 +2,15 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-16 16:03:23
+ * @LastEditTime: 2024-01-16 16:05:17
  * @FilePath: /mae/readme.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
 -->
 ## MAECG: A PyTorch Implementation
-<p style="text-align:center">
-  <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="480">
+<p align="center">
+  <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="1080">
 </p>
 
 This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
