@@ -37,7 +37,7 @@ from engine_finetune_de import train_one_epoch
 
 def get_args_parser():
     parser = argparse.ArgumentParser(
-        "MAE fine-tuning for image classification", add_help=False
+        "MAE fine-tuning", add_help=False
     )
     parser.add_argument(
         "--batch_size",
@@ -178,12 +178,10 @@ def get_args_parser():
     # Dataset parameters
     parser.add_argument(
         "--train_path",
-        default="/home/guoxin/storage/ssd/public/guoxin/mitdb/af_beat_train.pth",
+        default=[".."],
+        nargs="+",
         type=str,
         help="training set path",
-    )
-    parser.add_argument(
-        "--extra_train", default=None, type=str, help="extra training set path"
     )
 
     parser.add_argument(
@@ -248,10 +246,8 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = torch.load(args.train_path)
-    if args.extra_train:
-        extra_train = torch.load(args.extra_train)
-        dataset_train = torch.utils.data.ConcatDataset([dataset_train, extra_train])
+    dataset_train = [torch.load(dataset) for dataset in args.train_path]
+    dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()

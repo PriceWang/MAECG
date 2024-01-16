@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-15 14:48:07
+LastEditTime: 2024-01-15 16:13:49
 FilePath: /mae/dataprocess.py
 Description: 
 
@@ -27,7 +27,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--data_path",
-    default="../storage/ssd/public/unsupervisedecg/physionet.org/files/mitdb/1.0.0",
+    default="..",
     type=str,
     help="path of original dataset",
 )
@@ -39,7 +39,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--output_dir",
-    default="../storage/ssd/public/guoxin/mitdb",
+    default="..",
     type=str,
     help="path where to save",
 )

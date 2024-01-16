@@ -122,22 +122,22 @@ def evaluate(data_loader, model, device):
     model.eval()
 
     for batch in metric_logger.log_every(data_loader, 10, header):
-        images = batch[0]
+        samples = batch[0]
         target = batch[-1]
-        if not isinstance(images, list):
-            images = images.to(device, non_blocking=True)
-        if len(images.shape) == 2:
-            images = images.unsqueeze(1)
+        if not isinstance(samples, list):
+            samples = samples.to(device, non_blocking=True)
+        if len(samples.shape) == 2:
+            samples = samples.unsqueeze(1)
         target = target.to(device, non_blocking=True)
 
         # compute output
         with torch.cuda.amp.autocast():
-            output = model(images)
+            output = model(samples)
             loss = criterion(output, target)
 
         acc1, acc3 = accuracy(output, target, topk=(1, 3))
 
-        batch_size = images.shape[0]
+        batch_size = samples.shape[0]
         metric_logger.update(loss=loss.item())
         metric_logger.meters["acc1"].update(acc1.item(), n=batch_size)
         metric_logger.meters["acc3"].update(acc3.item(), n=batch_size)

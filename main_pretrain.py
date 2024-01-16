@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-15 14:48:42
+LastEditTime: 2024-01-16 13:41:29
 FilePath: /mae/main_pretrain.py
 Description: 
 
@@ -36,7 +36,7 @@ from engine_pretrain import train_one_epoch
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser("MAE pre-training", add_help=False)
+    parser = argparse.ArgumentParser("MAECG pre-training", add_help=False)
     parser.add_argument(
         "--batch_size",
         default=512,

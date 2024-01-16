@@ -2,152 +2,413 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-11 16:58:08
+ * @LastEditTime: 2024-01-16 16:03:23
  * @FilePath: /mae/readme.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
 -->
 ## MAECG: A PyTorch Implementation
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/11435359/146857310-f258c86c-fde6-48e8-9cee-badd2b21bd2c.png" width="480">
+<p style="text-align:center">
+  <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="480">
 </p>
 
+This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
 
-This is a PyTorch/GPU re-implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](https://arxiv.org/abs/2111.06377):
 ```
-@Article{MaskedAutoencoders2021,
-  author  = {Kaiming He and Xinlei Chen and Saining Xie and Yanghao Li and Piotr Doll{\'a}r and Ross Girshick},
-  journal = {arXiv:2111.06377},
-  title   = {Masked Autoencoders Are Scalable Vision Learners},
-  year    = {2021},
-}
+aaaa
 ```
 
-* This repo is a modification on the [MAE repo](https://github.com/facebookresearch/deit). Installation and preparation follow that repo.
+This repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
 
 ### Catalog
-
 - [x] Visualization demo
 - [x] Pre-training code
 - [x] Fine-tuning code
-- [ ] Pre-trained checkpoints
+- [x] Pre-trained checkpoints
+
+### Requirement
+Install the required package:
+
+```
+pip install -r requirements.txt
+```
+
+### Data Generation
+To generate unlabelled ECG datasets, run the following command:
+
+```
+python dataprocess.py \
+    --task ul_beat \
+    --data_path ${data_path} \
+    --output_dir ${output_dir} \
+    --width 240 \
+    --channel_names ${channel_names} \
+    --expansion 1
+```
+
+- Here we creat samples of length: `width` * 2.
+- `expansion` is a simple replication to extend dataset.
+
+To generate labelled ECG datasets, run the following command:
+
+```
+python dataprocess.py \
+    --task ${task} \
+    --data_path ${data_path} \
+    --output_dir ${output_dir} \
+    --width 240 \
+    --channel_names ${channel_names} \
+    --numclasses 5 \
+    --expansion 1 \
+```
+
+- Choose `task` from "af_beat", "au_beat" and "dn_beat".
+- Set `--prefix ${prefix}` when original data path is nested.
+- Set `--channel_names_wn ${channel_names_wn}` for denoise/decoder task.
+- Set `--numclasses 2` or `--numclasses 4` for different classification.
+- Set `--mitdb` to generate datasets from MITDB with special splits.
+
+The following table provides the generated datasets used in the paper:
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<th style="text-align:center"></th>
+<th style="text-align:center">CINC2021</th>
+<th style="text-align:center">MITDB</th>
+<th style="text-align:center">INCARTDB</th>
+<th style="text-align:center">ECGIDDB</th>
+<!-- TABLE BODY -->
+<tr><td style="text-align:left">Unlabelled</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1iRiKVuEFlIrSdhk-rLFTPpNy5DkGsJ1j/view?usp=drive_link">Download</a></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr><td style="text-align:left">Arrhythmia Classification (Train)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/16D2kmHp_ajZW67OTMr89Dmh7dGvNtkEn/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/13dWVe-S1dPzuVSsrnFvxvle1Akle2gv0/view?usp=drive_link">Download</a></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr><td style="text-align:left">Arrhythmia Classification (Valid)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1ri9ca7CuDix2xOQnD-5Z7Wz_AcWmNOKF/view?usp=drive_link">Download</a></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr><td style="text-align:left">Arrhythmia Classification (Test)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1HQLwkKOegrTgLHd94gf1scCo2_fdvuUo/view?usp=drive_link">Download</a></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr><td style="text-align:left">Human Identification (Train)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1q2Y-htBWQtJOHBll3bzLbHbPYqvgwiE0/view?usp=drive_link">Download</a></td>
+</tr>
+<tr><td style="text-align:left">Human Identification (Valid)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1fqe6VyVoowQmATJcaSYHhrSz3bFhecFq/view?usp=drive_link">Download</a></td>
+</tr>
+<tr><td style="text-align:left">Human Identification (Test)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1wn35Ou5kIaJAlG_peu4lsn4aV2nbBg8j/view?usp=drive_link">Download</a></td>
+</tr>
+<tr><td style="text-align:left">Denoising (Train)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/15zbQ3pVJfugWgVf51bRGnc6wph2paEed/view?usp=drive_link">Download</a></td>
+</tr>
+<tr><td style="text-align:left">Denoising (Test)</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1_EdqbUvmH-bYRxnh-QiQXbdVld3Gspzc/view?usp=drive_link">Download</a></td>
+</tr>
+</tbody></table>
 
 ### Pre-training
+To pre-train ViT-Base (recommended default) with multi-node distributed training, run the following on 1 nodes with 2 GPUs each:
 
-The pre-training instruction is in [PRETRAIN.md](PRETRAIN.md).
+```
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
+    --model mae_vit_base_patch32 \
+    --batch_size 256 \
+    --epochs 50 \
+    --accum_iter 4 \
+    --mask_ratio 0.5 \
+    --lr 3e-4 \
+    --data_path ${data_path} \
+    --output_dir ${output_dir} \
+    --log_dir ${log_dir} \
+```
 
-### Fine-tuning with pre-trained checkpoints
+- Here the effective batch size is 256 (`batch_size` per gpu) * 1 (nodes) * 2 (gpus per node) * 4 (`accum_iter`) = 2048.
+- To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
+- Set `mask_ratio` for mask ratio.
+- See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
+- Training time is ~3h in 2 A100 GPUs (500 epochs).
 
 The following table provides the pre-trained checkpoints used in the paper:
 
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
-<th valign="bottom"></th>
-<th valign="bottom">ViT-Base</th>
-<th valign="bottom">ViT-Large</th>
-<th valign="bottom">ViT-Huge</th>
+<th style="text-align:center"></th>
+<th style="text-align:center">ViT-Atto</th>
+<th style="text-align:center">ViT-Tiny</th>
+<th style="text-align:center">ViT-Small</th>
+<th style="text-align:center">ViT-Base</th>
+<th style="text-align:center">ViT-Large</th>
+<th style="text-align:center">ViT-Huge</th>
 <!-- TABLE BODY -->
-<tr><td align="left">pre-trained checkpoint</td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_base.pth">download</a></td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_large.pth">download</a></td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_huge.pth">download</a></td>
-</tr>
-<tr><td align="left">md5</td>
-<td align="center"><tt>8cad7c</tt></td>
-<td align="center"><tt>b8b06e</tt></td>
-<td align="center"><tt>9bdbb0</tt></td>
+<tr><td style="text-align:left">Pre-trained Checkpoint</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1oSd0HqT9KOxtob0Vh260xj_cvu5GELll/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/18kSHlZXpxKMhoq82Ryl8_y56mfvWvnlB/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1EptUU4Yjm2UCxusBt5OaFmRNCi9mkfjd/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/15KQrAaLg-o3xQGvYteZ6b4aVoVzusgKZ/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1Nrok2tbRzRwgjJN0ZgoEKhYptpn2kj3e/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1GJ8cfcNuWFAiCreBC3XpdWdSrVR4QYGM/view?usp=drive_link">Download</a></td>
 </tr>
 </tbody></table>
 
-The fine-tuning instruction is in [FINETUNE.md](FINETUNE.md).
+### Fine-tuning with pre-trained checkpoints
+#### Fine-tuning
+To fine-tune with multi-node distributed training, run the following command:
 
-By fine-tuning these pre-trained models, we rank #1 in these classification tasks (detailed in the paper):
+```
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_base_p32 \
+    --batch_size 1024 \
+    --lr 3e-4 \
+    --epochs 200 \
+    --finetune ${pretrain_ckpt} \
+    --train_path ${train_path}\
+    --test_path ${test_path} \
+    --output_dir ${output_dir} \
+    --log_dir ${log_dir}
+```
+
+- Here the effective batch size is 1024 (`batch_size` per gpu) * 1 (node) * 1 (gpus per node) = 1024.
+- Set `--train_path ${train_path_1} ${train_path_2} ...` to fine-tune with multiple datasets
+- See [MAE fin-tuning](https://github.com/facebookresearch/mae/blob/main/FINETUNE.md) for detailed parameter setting.
+- Training time is ~53m in 1 RTX3090 GPU.
+
+Script for human identification:
+
+```
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
+    --model vit_base_p32 \
+    --batch_size 32 \
+    --lr 1e-3 \
+    --epochs 200 \
+    --finetune ${pretrain_ckpt} \
+    --train_path ${train_path}\
+    --test_path ${test_path} \
+    --mixup 0.5 \
+    --output_dir ${output_dir} \
+    --log_dir ${log_dir}
+```
+
+- Here the effective batch size is 32 (`batch_size` per gpu) * 1 (node) * 1 (gpus per node) = 32.
+- Training time is ~10m in 1 RTX3090 GPU.
+
+Script for denoising:
+
+```
+OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune_de.py \
+    --model mae_vit_base_patch32 \
+    --batch_size 32 \
+    --lr 1e-3 \
+    --epochs 200 \
+    --finetune ${pretrain_ckpt} \
+    --train_path ${train_path}\
+    --output_dir ${output_dir} \
+    --log_dir ${log_dir}
+```
+
+- Training time is ~23m in 1 RTX3090 GPU.
+
+#### Evaluation
+
+As a sanity check, run evaluation using our fine-tuned models:
+
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
-<th valign="bottom"></th>
-<th valign="bottom">ViT-B</th>
-<th valign="bottom">ViT-L</th>
-<th valign="bottom">ViT-H</th>
-<th valign="bottom">ViT-H<sub>448</sub></th>
-<td valign="bottom" style="color:#C0C0C0">prev best</td>
+<th style="text-align:center"></th>
+<th style="text-align:center">Arrhythmia Classification</th>
+<th style="text-align:center">Human Identification</th>
 <!-- TABLE BODY -->
-<tr><td align="left">ImageNet-1K (no external data)</td>
-<td align="center">83.6</td>
-<td align="center">85.9</td>
-<td align="center">86.9</td>
-<td align="center"><b>87.8</b></td>
-<td align="center" style="color:#C0C0C0">87.1</td>
+<tr><td style="text-align:left">Fine-tuned Checkpoint</td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/1ecgRMODPc8SCfi45qDWTLZVcuy3jWmMm/view?usp=drive_link">Download</a></td>
+<td style="text-align:center"><a href="https://drive.google.com/file/d/16Ncku76qUAWvoHZBaLnotnFWpE2XvX5I/view?usp=drive_link">Download</a></td>
 </tr>
-<td colspan="5"><font size="1"><em>following are evaluation of the same model weights (fine-tuned in original ImageNet-1K):</em></font></td>
+<tr><td style="text-align:left">Reference Accuracy</td>
+<td style="text-align:center">99.622</td>
+<td style="text-align:center">100.000</td>
+</tr>
+</tbody></table>
+
+Evaluate arrhythmia classification on INCARTDB in a single GPU:
+
+```
+python main_finetune.py \
+    --model vit_base_p32 \
+    --resume ${finetune_ckpt} \
+    --test_path ${INCARTDB_path} \
+    --eval
+```
+
+This should give:
+
+```
+* Acc@1 99.622 Acc@3 99.988 loss 0.097
+```
+
+Evaluate human identification on ECGIDDB_train:
+
+```
+python main_finetune.py \
+    --model vit_base_p32 \
+    --resume ${finetune_ckpt} \
+    --test_path ${ECGIDDB_train_path} \
+    --eval
+```
+
+This should give:
+
+```
+* Acc@1 100.000 Acc@3 100.000 loss 0.188
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Results
+
+By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in the paper):
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
 <tr>
+<td colspan="5"><font size="1"><em>following are the results of different models, a patch size of 32 and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
 </tr>
-<tr><td align="left">ImageNet-Corruption (error rate) </td>
-<td align="center">51.7</td>
-<td align="center">41.8</td>
-<td align="center"><b>33.8</b></td>
-<td align="center">36.8</td>
-<td align="center" style="color:#C0C0C0">42.5</td>
+<th style="text-align:center"></th>
+<th style="text-align:center">ViT-Atto</th>
+<th style="text-align:center">ViT-Tiny</th>
+<th style="text-align:center">ViT-Small</th>
+<th style="text-align:center">ViT-Base</th>
+<th style="text-align:center">ViT-Large</th>
+<th style="text-align:center">ViT-Huge</th>
+<!-- TABLE BODY -->
+<tr><td align="left">MITDB-DS2</td>
+<td style="text-align:center">93.3</td>
+<td style="text-align:center">93.4</td>
+<td style="text-align:center">94.8</td>
+<td style="text-align:center"><b>95.6</b></td>
+<td style="text-align:center">95.4</td>
+<td style="text-align:center">95.4</td>
 </tr>
-<tr><td align="left">ImageNet-Adversarial</td>
-<td align="center">35.9</td>
-<td align="center">57.1</td>
-<td align="center">68.2</td>
-<td align="center"><b>76.7</b></td>
-<td align="center" style="color:#C0C0C0">35.8</td>
+<tr><td align="left">ECGIDDB</td>
+<td style="text-align:center">94.1</td>
+<td style="text-align:center">97.1</td>
+<td style="text-align:center">98.7</td>
+<td style="text-align:center"><b>98.8</b></td>
+<td style="text-align:center">98.5</td>
+<td style="text-align:center">98.3</td>
 </tr>
-<tr><td align="left">ImageNet-Rendition</td>
-<td align="center">48.3</td>
-<td align="center">59.9</td>
-<td align="center">64.4</td>
-<td align="center"><b>66.5</b></td>
-<td align="center" style="color:#C0C0C0">48.7</td>
+</tbody></table>
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<tr>
+<td colspan="5"><font size="1"><em>following are the results of different patch sizes, a ViT-Base model and a mask ratio of 0.5 for the pre-trained MAECG:</em></font></td>
 </tr>
-<tr><td align="left">ImageNet-Sketch</td>
-<td align="center">34.5</td>
-<td align="center">45.3</td>
-<td align="center">49.6</td>
-<td align="center"><b>50.9</b></td>
-<td align="center" style="color:#C0C0C0">36.0</td>
+<th style="text-align:center"></th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">8</th>
+<th style="text-align:center">16</th>
+<th style="text-align:center">32</th>
+<th style="text-align:center">96</th>
+<!-- TABLE BODY -->
+<tr><td align="left">MITDB-DS2</td>
+<td style="text-align:center">93.8</td>
+<td style="text-align:center">94.5</td>
+<td style="text-align:center">94.7</td>
+<td style="text-align:center">95.1</td>
+<td style="text-align:center"><b>95.6</b></td>
+<td style="text-align:center">94.1</td>
 </tr>
-<td colspan="5"><font size="1"><em>following are transfer learning by fine-tuning the pre-trained MAE on the target dataset:</em></font></td>
+<tr><td align="left">ECGIDDB</td>
+<td style="text-align:center">88.7</td>
+<td style="text-align:center">92.6</td>
+<td style="text-align:center">95.5</td>
+<td style="text-align:center">98.4</td>
+<td style="text-align:center"><b>98.8</b></td>
+<td style="text-align:center">95.7</td>
 </tr>
-<tr><td align="left">iNaturalists 2017</td>
-<td align="center">70.5</td>
-<td align="center">75.7</td>
-<td align="center">79.3</td>
-<td align="center"><b>83.4</b></td>
-<td align="center" style="color:#C0C0C0">75.4</td>
+</tbody></table>
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<tr>
+<td colspan="5"><font size="1"><em>following are the results of different mask ratios, a ViT-Base model and a patch size of 32 for the pre-trained MAECG:</em></font></td>
 </tr>
-<tr><td align="left">iNaturalists 2018</td>
-<td align="center">75.4</td>
-<td align="center">80.1</td>
-<td align="center">83.0</td>
-<td align="center"><b>86.8</b></td>
-<td align="center" style="color:#C0C0C0">81.2</td>
+<th style="text-align:center"></th>
+<th style="text-align:center">0.1</th>
+<th style="text-align:center">0.2</th>
+<th style="text-align:center">0.3</th>
+<th style="text-align:center">0.4</th>
+<th style="text-align:center">0.5</th>
+<th style="text-align:center">0.6</th>
+<th style="text-align:center">0.7</th>
+<th style="text-align:center">0.8</th>
+<th style="text-align:center">0.9</th>
+<!-- TABLE BODY -->
+<tr><td align="left">MITDB-DS2</td>
+<td style="text-align:center">92.6</td>
+<td style="text-align:center">93.4</td>
+<td style="text-align:center">95.3</td>
+<td style="text-align:center">95.4</td>
+<td style="text-align:center"><b>95.6</b></td>
+<td style="text-align:center">95.3</td>
+<td style="text-align:center">95.3</td>
+<td style="text-align:center">95.2</td>
+<td style="text-align:center">90.3</td>
 </tr>
-<tr><td align="left">iNaturalists 2019</td>
-<td align="center">80.5</td>
-<td align="center">83.4</td>
-<td align="center">85.7</td>
-<td align="center"><b>88.3</b></td>
-<td align="center" style="color:#C0C0C0">84.1</td>
-</tr>
-<tr><td align="left">Places205</td>
-<td align="center">63.9</td>
-<td align="center">65.8</td>
-<td align="center">65.9</td>
-<td align="center"><b>66.8</b></td>
-<td align="center" style="color:#C0C0C0">66.0</td>
-</tr>
-<tr><td align="left">Places365</td>
-<td align="center">57.9</td>
-<td align="center">59.4</td>
-<td align="center">59.8</td>
-<td align="center"><b>60.3</b></td>
-<td align="center" style="color:#C0C0C0">58.0</td>
+<tr><td align="left">ECGIDDB</td>
+<td style="text-align:center">69.4</td>
+<td style="text-align:center">73.4</td>
+<td style="text-align:center">97.9</td>
+<td style="text-align:center">98.5</td>
+<td style="text-align:center"><b>98.8</b></td>
+<td style="text-align:center">98.7</td>
+<td style="text-align:center">98.0</td>
+<td style="text-align:center">96.5</td>
+<td style="text-align:center">38.5</td>
 </tr>
 </tbody></table>

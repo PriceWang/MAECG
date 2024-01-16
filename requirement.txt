@@ -1,0 +1,6 @@
+torch==2.0.0
+torchvision==0.15.0
+timm==0.4.12
+wfdb==4.1.0
+neurokit2==0.2.3
+tqdm==4.64.1

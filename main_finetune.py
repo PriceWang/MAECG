@@ -41,7 +41,7 @@ from engine_finetune import train_one_epoch, evaluate
 
 def get_args_parser():
     parser = argparse.ArgumentParser(
-        "MAE fine-tuning for image classification", add_help=False
+        "MAECG fine-tuning", add_help=False
     )
     parser.add_argument(
         "--batch_size",
@@ -209,14 +209,14 @@ def get_args_parser():
     # Dataset parameters
     parser.add_argument(
         "--train_path",
-        default=["/home/guoxin/storage/ssd/public/guoxin/mitdb/af_beat_train.pth"],
+        default=[".."],
         nargs="+",
         type=str,
         help="training set path",
     )
     parser.add_argument(
         "--test_path",
-        default="/home/guoxin/storage/ssd/public/guoxin/mitdb/af_beat_valid.pth",
+        default="..",
         type=str,
         help="testing set path",
     )
@@ -287,6 +287,8 @@ def main(args):
 
     cudnn.benchmark = True
 
+    if args.eval:
+        args.train_path = [args.test_path]
     dataset_train = [torch.load(dataset) for dataset in args.train_path]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
@@ -454,7 +456,7 @@ def main(args):
     if args.eval:
         test_stats = evaluate(data_loader_val, model, device)
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
         exit(0)
 
@@ -480,7 +482,7 @@ def main(args):
 
         test_stats = evaluate(data_loader_val, model, device)
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
         max_accuracy = max(max_accuracy, test_stats["acc1"])
         print(f"Max accuracy: {max_accuracy:.2f}%")
