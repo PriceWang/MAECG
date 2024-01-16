@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-16 16:05:17
+ * @LastEditTime: 2024-01-16 16:13:59
  * @FilePath: /mae/readme.md
  * @Description: 
  * 
@@ -65,8 +65,8 @@ python dataprocess.py \
 
 - Choose `task` from "af_beat", "au_beat" and "dn_beat".
 - Set `--prefix ${prefix}` when original data path is nested.
-- Set `--channel_names_wn ${channel_names_wn}` for denoise/decoder task.
-- Set `--numclasses 2` or `--numclasses 4` for different classification.
+- Set `--channel_names_wn ${channel_names_wn}` for denoising/decoding.
+- Set `--numclasses 2` or `--numclasses 4` for different classifications.
 - Set `--mitdb` to generate datasets from MITDB with special splits.
 
 The following table provides the generated datasets used in the paper:
@@ -80,59 +80,59 @@ The following table provides the generated datasets used in the paper:
 <th style="text-align:center">INCARTDB</th>
 <th style="text-align:center">ECGIDDB</th>
 <!-- TABLE BODY -->
-<tr><td style="text-align:left">Unlabelled</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1iRiKVuEFlIrSdhk-rLFTPpNy5DkGsJ1j/view?usp=drive_link">Download</a></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
+<tr><td align="left">Unlabelled</td>
+<td align="center"><a href="https://drive.google.com/file/d/1iRiKVuEFlIrSdhk-rLFTPpNy5DkGsJ1j/view?usp=drive_link">Download</a></td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
 </tr>
-<tr><td style="text-align:left">Arrhythmia Classification (Train)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/16D2kmHp_ajZW67OTMr89Dmh7dGvNtkEn/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/13dWVe-S1dPzuVSsrnFvxvle1Akle2gv0/view?usp=drive_link">Download</a></td>
-<td style="text-align:center">X</td>
+<tr><td align="left">Arrhythmia Classification (Train)</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/16D2kmHp_ajZW67OTMr89Dmh7dGvNtkEn/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/13dWVe-S1dPzuVSsrnFvxvle1Akle2gv0/view?usp=drive_link">Download</a></td>
+<td align="center">X</td>
 </tr>
-<tr><td style="text-align:left">Arrhythmia Classification (Valid)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1ri9ca7CuDix2xOQnD-5Z7Wz_AcWmNOKF/view?usp=drive_link">Download</a></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
+<tr><td align="left">Arrhythmia Classification (Valid)</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1ri9ca7CuDix2xOQnD-5Z7Wz_AcWmNOKF/view?usp=drive_link">Download</a></td>
+<td align="center">X</td>
+<td align="center">X</td>
 </tr>
-<tr><td style="text-align:left">Arrhythmia Classification (Test)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1HQLwkKOegrTgLHd94gf1scCo2_fdvuUo/view?usp=drive_link">Download</a></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
+<tr><td align="left">Arrhythmia Classification (Test)</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1HQLwkKOegrTgLHd94gf1scCo2_fdvuUo/view?usp=drive_link">Download</a></td>
+<td align="center">X</td>
+<td align="center">X</td>
 </tr>
-<tr><td style="text-align:left">Human Identification (Train)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1q2Y-htBWQtJOHBll3bzLbHbPYqvgwiE0/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Human Identification (Train)</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1q2Y-htBWQtJOHBll3bzLbHbPYqvgwiE0/view?usp=drive_link">Download</a></td>
 </tr>
-<tr><td style="text-align:left">Human Identification (Valid)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1fqe6VyVoowQmATJcaSYHhrSz3bFhecFq/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Human Identification (Valid)</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1fqe6VyVoowQmATJcaSYHhrSz3bFhecFq/view?usp=drive_link">Download</a></td>
 </tr>
-<tr><td style="text-align:left">Human Identification (Test)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1wn35Ou5kIaJAlG_peu4lsn4aV2nbBg8j/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Human Identification (Test)</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1wn35Ou5kIaJAlG_peu4lsn4aV2nbBg8j/view?usp=drive_link">Download</a></td>
 </tr>
-<tr><td style="text-align:left">Denoising (Train)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/15zbQ3pVJfugWgVf51bRGnc6wph2paEed/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Denoising (Train)</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/15zbQ3pVJfugWgVf51bRGnc6wph2paEed/view?usp=drive_link">Download</a></td>
 </tr>
-<tr><td style="text-align:left">Denoising (Test)</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1_EdqbUvmH-bYRxnh-QiQXbdVld3Gspzc/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Denoising (Test)</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"><a href="https://drive.google.com/file/d/1_EdqbUvmH-bYRxnh-QiQXbdVld3Gspzc/view?usp=drive_link">Download</a></td>
 </tr>
 </tbody></table>
 
@@ -171,13 +171,13 @@ The following table provides the pre-trained checkpoints used in the paper:
 <th style="text-align:center">ViT-Large</th>
 <th style="text-align:center">ViT-Huge</th>
 <!-- TABLE BODY -->
-<tr><td style="text-align:left">Pre-trained Checkpoint</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1oSd0HqT9KOxtob0Vh260xj_cvu5GELll/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/18kSHlZXpxKMhoq82Ryl8_y56mfvWvnlB/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1EptUU4Yjm2UCxusBt5OaFmRNCi9mkfjd/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/15KQrAaLg-o3xQGvYteZ6b4aVoVzusgKZ/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1Nrok2tbRzRwgjJN0ZgoEKhYptpn2kj3e/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1GJ8cfcNuWFAiCreBC3XpdWdSrVR4QYGM/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Pre-trained Checkpoint</td>
+<td align="center"><a href="https://drive.google.com/file/d/1oSd0HqT9KOxtob0Vh260xj_cvu5GELll/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/18kSHlZXpxKMhoq82Ryl8_y56mfvWvnlB/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1EptUU4Yjm2UCxusBt5OaFmRNCi9mkfjd/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/15KQrAaLg-o3xQGvYteZ6b4aVoVzusgKZ/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1Nrok2tbRzRwgjJN0ZgoEKhYptpn2kj3e/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1GJ8cfcNuWFAiCreBC3XpdWdSrVR4QYGM/view?usp=drive_link">Download</a></td>
 </tr>
 </tbody></table>
 
@@ -249,13 +249,13 @@ As a sanity check, run evaluation using our fine-tuned models:
 <th style="text-align:center">Arrhythmia Classification</th>
 <th style="text-align:center">Human Identification</th>
 <!-- TABLE BODY -->
-<tr><td style="text-align:left">Fine-tuned Checkpoint</td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/1ecgRMODPc8SCfi45qDWTLZVcuy3jWmMm/view?usp=drive_link">Download</a></td>
-<td style="text-align:center"><a href="https://drive.google.com/file/d/16Ncku76qUAWvoHZBaLnotnFWpE2XvX5I/view?usp=drive_link">Download</a></td>
+<tr><td align="left">Fine-tuned Checkpoint</td>
+<td align="center"><a href="https://drive.google.com/file/d/1ecgRMODPc8SCfi45qDWTLZVcuy3jWmMm/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/16Ncku76qUAWvoHZBaLnotnFWpE2XvX5I/view?usp=drive_link">Download</a></td>
 </tr>
-<tr><td style="text-align:left">Reference Accuracy</td>
-<td style="text-align:center">99.622</td>
-<td style="text-align:center">100.000</td>
+<tr><td align="left">Reference Accuracy</td>
+<td align="center">99.622</td>
+<td align="center">100.000</td>
 </tr>
 </tbody></table>
 
@@ -323,20 +323,20 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <th style="text-align:center">ViT-Huge</th>
 <!-- TABLE BODY -->
 <tr><td align="left">MITDB-DS2</td>
-<td style="text-align:center">93.3</td>
-<td style="text-align:center">93.4</td>
-<td style="text-align:center">94.8</td>
-<td style="text-align:center"><b>95.6</b></td>
-<td style="text-align:center">95.4</td>
-<td style="text-align:center">95.4</td>
+<td align="center">93.3</td>
+<td align="center">93.4</td>
+<td align="center">94.8</td>
+<td align="center"><b>95.6</b></td>
+<td align="center">95.4</td>
+<td align="center">95.4</td>
 </tr>
 <tr><td align="left">ECGIDDB</td>
-<td style="text-align:center">94.1</td>
-<td style="text-align:center">97.1</td>
-<td style="text-align:center">98.7</td>
-<td style="text-align:center"><b>98.8</b></td>
-<td style="text-align:center">98.5</td>
-<td style="text-align:center">98.3</td>
+<td align="center">94.1</td>
+<td align="center">97.1</td>
+<td align="center">98.7</td>
+<td align="center"><b>98.8</b></td>
+<td align="center">98.5</td>
+<td align="center">98.3</td>
 </tr>
 </tbody></table>
 
@@ -355,20 +355,20 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <th style="text-align:center">96</th>
 <!-- TABLE BODY -->
 <tr><td align="left">MITDB-DS2</td>
-<td style="text-align:center">93.8</td>
-<td style="text-align:center">94.5</td>
-<td style="text-align:center">94.7</td>
-<td style="text-align:center">95.1</td>
-<td style="text-align:center"><b>95.6</b></td>
-<td style="text-align:center">94.1</td>
+<td align="center">93.8</td>
+<td align="center">94.5</td>
+<td align="center">94.7</td>
+<td align="center">95.1</td>
+<td align="center"><b>95.6</b></td>
+<td align="center">94.1</td>
 </tr>
 <tr><td align="left">ECGIDDB</td>
-<td style="text-align:center">88.7</td>
-<td style="text-align:center">92.6</td>
-<td style="text-align:center">95.5</td>
-<td style="text-align:center">98.4</td>
-<td style="text-align:center"><b>98.8</b></td>
-<td style="text-align:center">95.7</td>
+<td align="center">88.7</td>
+<td align="center">92.6</td>
+<td align="center">95.5</td>
+<td align="center">98.4</td>
+<td align="center"><b>98.8</b></td>
+<td align="center">95.7</td>
 </tr>
 </tbody></table>
 
@@ -390,25 +390,25 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <th style="text-align:center">0.9</th>
 <!-- TABLE BODY -->
 <tr><td align="left">MITDB-DS2</td>
-<td style="text-align:center">92.6</td>
-<td style="text-align:center">93.4</td>
-<td style="text-align:center">95.3</td>
-<td style="text-align:center">95.4</td>
-<td style="text-align:center"><b>95.6</b></td>
-<td style="text-align:center">95.3</td>
-<td style="text-align:center">95.3</td>
-<td style="text-align:center">95.2</td>
-<td style="text-align:center">90.3</td>
+<td align="center">92.6</td>
+<td align="center">93.4</td>
+<td align="center">95.3</td>
+<td align="center">95.4</td>
+<td align="center"><b>95.6</b></td>
+<td align="center">95.3</td>
+<td align="center">95.3</td>
+<td align="center">95.2</td>
+<td align="center">90.3</td>
 </tr>
 <tr><td align="left">ECGIDDB</td>
-<td style="text-align:center">69.4</td>
-<td style="text-align:center">73.4</td>
-<td style="text-align:center">97.9</td>
-<td style="text-align:center">98.5</td>
-<td style="text-align:center"><b>98.8</b></td>
-<td style="text-align:center">98.7</td>
-<td style="text-align:center">98.0</td>
-<td style="text-align:center">96.5</td>
-<td style="text-align:center">38.5</td>
+<td align="center">69.4</td>
+<td align="center">73.4</td>
+<td align="center">97.9</td>
+<td align="center">98.5</td>
+<td align="center"><b>98.8</b></td>
+<td align="center">98.7</td>
+<td align="center">98.0</td>
+<td align="center">96.5</td>
+<td align="center">38.5</td>
 </tr>
 </tbody></table>
