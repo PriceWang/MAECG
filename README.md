@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-16 16:15:03
- * @FilePath: /mae/readme.md
+ * @LastEditTime: 2024-01-16 16:52:06
+ * @FilePath: /mae/README.md
  * @Description: 
  * 
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -19,7 +19,7 @@ This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performan
 aaaa
 ```
 
-This repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
+This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) and this repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
 
 ### Catalog
 - [x] Visualization demo
@@ -399,3 +399,6 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <td align="center">38.5</td>
 </tr>
 </tbody></table>
+
+### License
+This project is licensed under the terms of the MIT license. See [LICENSE](LICENSE) for details.
