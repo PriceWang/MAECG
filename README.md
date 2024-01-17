@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-16 16:52:06
+ * @LastEditTime: 2024-01-17 11:54:10
  * @FilePath: /mae/README.md
  * @Description: 
  * 
@@ -200,7 +200,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
 
 - Here the effective batch size is 1024 (`batch_size` per gpu) * 1 (node) * 1 (gpus per node) = 1024.
 - Set `--train_path ${train_path_1} ${train_path_2} ...` to fine-tune with multiple datasets
-- See [MAE fin-tuning](https://github.com/facebookresearch/mae/blob/main/FINETUNE.md) for detailed parameter setting.
+- See [MAE fine-tuning](https://github.com/facebookresearch/mae/blob/main/FINETUNE.md) for detailed parameter setting.
 - Training time is ~53m in 1 RTX3090 GPU.
 
 Script for human identification:
