@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-17 11:54:10
+ * @LastEditTime: 2024-01-17 17:32:41
  * @FilePath: /mae/README.md
  * @Description: 
  * 
@@ -22,10 +22,13 @@ aaaa
 This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) and this repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
 
 ### Catalog
-- [x] Visualization demo
 - [x] Pre-training code
-- [x] Fine-tuning code
 - [x] Pre-trained checkpoints
+- [x] Linear probing code
+- [x] Linear probed checkpoints
+- [ ] Fine-tuning code
+- [ ] Fine-tuned checkpoints
+- [x] Visualization demo
 
 ### Requirement
 Install the required package:
@@ -156,6 +159,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
 - To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
 - Set `mask_ratio` for mask ratio.
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
+- To speed up training, turn on automatic mixed precision (`torch.cuda.amp`). But there is a chance of producing NaN when pre-training ViT-Large/ViT-Huge in GPUs.
 - Training time is ~3h in 2 A100 GPUs (500 epochs).
 
 The following table provides the pre-trained checkpoints used in the paper:
@@ -183,6 +187,8 @@ The following table provides the pre-trained checkpoints used in the paper:
 
 ### Fine-tuning with pre-trained checkpoints
 #### Fine-tuning
+Currently, we just implemented Linear Probing (freeze encoder).
+
 To fine-tune with multi-node distributed training, run the following command:
 
 ```
@@ -399,6 +405,13 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 <td align="center">38.5</td>
 </tr>
 </tbody></table>
+
+### Visualization demo
+Run our interactive visualization demo and plot figures with [Jupyter notebook](Visualize.ipynb):
+
+<p align="center">
+  <img src="https://private-user-images.githubusercontent.com/30796250/297465444-3eed2ccc-e97c-46a7-b656-1df7037e18fe.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU1MTI5MTQsIm5iZiI6MTcwNTUxMjYxNCwicGF0aCI6Ii8zMDc5NjI1MC8yOTc0NjU0NDQtM2VlZDJjY2MtZTk3Yy00NmE3LWI2NTYtMWRmNzAzN2UxOGZlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE3VDE3MzAxNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ2NjQwMTlhOTllNzFlMzc3ZGUwYWQ4Yzc4N2ExZTcyZWQ0M2I0MGIzYzA4NjdiZTIwYmRhMmE0NjI5MmUzN2QmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.gKN6jho9z8n9M9FDpFFtAAxybtkgfoePbFE9xOqQm0Q" width="1080">
+</p>
 
 ### License
 This project is licensed under the terms of the MIT license. See [LICENSE](LICENSE) for details.
