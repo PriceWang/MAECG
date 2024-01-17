@@ -4,3 +4,4 @@ timm==0.4.12
 wfdb==4.1.0
 neurokit2==0.2.3
 tqdm==4.64.1
+seaborn==0.13.0
