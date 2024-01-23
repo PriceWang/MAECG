@@ -1,13 +1,13 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+"""
+Author: Guoxin Wang
+Date: 2023-07-23 18:15:10
+LastEditors: Guoxin Wang
+LastEditTime: 2024-01-23 14:30:36
+FilePath: /mae/main_finetune_de.py
+Description: Finetune with decoder
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-# --------------------------------------------------------
-# References:
-# DeiT: https://github.com/facebookresearch/deit
-# BEiT: https://github.com/microsoft/unilm/tree/master/beit
-# --------------------------------------------------------
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+"""
 
 import argparse
 import datetime
@@ -36,9 +36,7 @@ from engine_finetune_de import train_one_epoch
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser(
-        "MAE fine-tuning", add_help=False
-    )
+    parser = argparse.ArgumentParser("MAE fine-tuning", add_help=False)
     parser.add_argument(
         "--batch_size",
         default=1024,
@@ -60,14 +58,6 @@ def get_args_parser():
         type=str,
         metavar="MODEL",
         help="Name of model to train",
-    )
-
-    parser.add_argument(
-        "--drop_path",
-        type=float,
-        default=0.1,
-        metavar="PCT",
-        help="Drop path rate (default: 0.1)",
     )
 
     # Optimizer parameters
@@ -115,48 +105,7 @@ def get_args_parser():
         "--warmup_epochs", type=int, default=40, metavar="N", help="epochs to warmup LR"
     )
 
-    # Augmentation parameters
-    parser.add_argument(
-        "--color_jitter",
-        type=float,
-        default=None,
-        metavar="PCT",
-        help="Color jitter factor (enabled only when not using Auto/RandAug)",
-    )
-    parser.add_argument(
-        "--aa",
-        type=str,
-        default="rand-m9-mstd0.5-inc1",
-        metavar="NAME",
-        help='Use AutoAugment policy. "v0" or "original". " + "(default: rand-m9-mstd0.5-inc1)',
-    ),
-    parser.add_argument(
-        "--smoothing", type=float, default=0.1, help="Label smoothing (default: 0.1)"
-    )
-
     # * Random Erase params
-    parser.add_argument(
-        "--reprob",
-        type=float,
-        default=0.25,
-        metavar="PCT",
-        help="Random erase prob (default: 0.25)",
-    )
-    parser.add_argument(
-        "--remode",
-        type=str,
-        default="pixel",
-        help='Random erase mode (default: "pixel")',
-    )
-    parser.add_argument(
-        "--recount", type=int, default=1, help="Random erase count (default: 1)"
-    )
-    parser.add_argument(
-        "--resplit",
-        action="store_true",
-        default=False,
-        help="Do not random erase first (clean) augmentation split",
-    )
     parser.add_argument(
         "--norm_pix_loss",
         action="store_true",
@@ -170,6 +119,12 @@ def get_args_parser():
         default=None,
         help="finetune from checkpoint",
     )
+    parser.add_argument(
+        "--linear",
+        action="store_true",
+        help="linear probing",
+    )
+    parser.set_defaults(linear=True)
     # parser.add_argument('--global_pool', action='store_true')
     # parser.set_defaults(global_pool=True)
     # parser.add_argument('--cls_token', action='store_false', dest='global_pool',
@@ -198,11 +153,8 @@ def get_args_parser():
     )
     parser.add_argument("--seed", default=0, type=int)
     parser.add_argument("--resume", default="", help="resume from checkpoint")
-    parser.add_argument("--incart", action="store_true")
-    parser.set_defaults(incart=False)
 
     parser.add_argument("--auto_resume", action="store_true")
-    parser.set_defaults(incart=False)
     parser.add_argument("--save_ckpt_freq", default=1, type=int)
     parser.add_argument("--save_ckpt_num", default=1, type=int)
 
@@ -305,9 +257,10 @@ def main(args):
         # manually initialize fc layer
         # trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
 
-        # freeze all but the head
-        for _, p in model.named_parameters():
-            p.requires_grad = False
+        if not args.linear:
+            # freeze all but the head
+            for _, p in model.named_parameters():
+                p.requires_grad = False
         for _, p in model.decoder_embed.named_parameters():
             p.requires_grad = True
         for _, p in model.decoder_blocks.named_parameters():

@@ -1,3 +1,14 @@
+"""
+Author: Guoxin Wang
+Date: 2023-08-17 11:06:06
+LastEditors: Guoxin Wang
+LastEditTime: 2024-01-23 14:32:52
+FilePath: /mae/vit_mae.py
+Description: Models
+
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+"""
+
 from functools import partial
 
 import torch

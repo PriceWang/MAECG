@@ -1,13 +1,13 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+"""
+Author: Guoxin Wang
+Date: 2023-07-23 18:04:28
+LastEditors: Guoxin Wang
+LastEditTime: 2024-01-23 14:32:23
+FilePath: /mae/engine_finetune_de.py
+Description: 
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-# --------------------------------------------------------
-# References:
-# DeiT: https://github.com/facebookresearch/deit
-# BEiT: https://github.com/microsoft/unilm/tree/master/beit
-# --------------------------------------------------------
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+"""
 
 import math
 import sys

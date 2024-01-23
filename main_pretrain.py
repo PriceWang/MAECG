@@ -2,12 +2,13 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-16 13:41:29
+LastEditTime: 2024-01-23 14:32:06
 FilePath: /mae/main_pretrain.py
-Description: 
+Description: Pretrain
 
 Copyright (c) 2023 by Guoxin Wang, All Rights Reserved. 
 """
+
 import argparse
 import datetime
 import json
