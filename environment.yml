@@ -1,0 +1,15 @@
+name: maecg
+channels:
+  - defaults
+dependencies:
+  - pip=23.0.1
+  - python=3.10.9
+  - pip:
+    - torch==2.0.0
+    - torchvision==0.15.1
+    - timm==0.4.12
+    - wfdb==4.1.0
+    - neurokit2==0.2.3
+    - tqdm==4.64.1
+    - seaborn==0.13.0
+    - tensorboard==2.13.0

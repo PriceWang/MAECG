@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-17 17:32:41
+ * @LastEditTime: 2024-01-23 20:20:38
  * @FilePath: /mae/README.md
  * @Description: 
  * 
@@ -34,7 +34,13 @@ This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](http
 Install the required package:
 
 ```
-pip install -r requirements.txt
+conda env create -n maecg --file environment.yml
+```
+
+Activate environment:
+
+```
+conda activate maecg
 ```
 
 ### Data Generation
