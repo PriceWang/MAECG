@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-23 20:20:38
+ * @LastEditTime: 2024-01-26 02:02:50
  * @FilePath: /mae/README.md
  * @Description: 
  * 
@@ -24,10 +24,8 @@ This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](http
 ### Catalog
 - [x] Pre-training code
 - [x] Pre-trained checkpoints
-- [x] Linear probing code
-- [x] Linear probed checkpoints
-- [ ] Fine-tuning code
-- [ ] Fine-tuned checkpoints
+- [x] Fine-tuning code
+- [x] Fine-tuned checkpoints
 - [x] Visualization demo
 
 ### Requirement
@@ -193,7 +191,7 @@ The following table provides the pre-trained checkpoints used in the paper:
 
 ### Fine-tuning with pre-trained checkpoints
 #### Fine-tuning
-Currently, we just implemented Linear Probing (freeze encoder).
+Currently, we implemented fine-tuning by freezing encoder.
 
 To fine-tune with multi-node distributed training, run the following command:
 

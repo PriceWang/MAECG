@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-23 14:30:36
+LastEditTime: 2024-01-26 03:00:48
 FilePath: /mae/main_finetune_de.py
 Description: Finetune with decoder
 
@@ -124,7 +124,7 @@ def get_args_parser():
         action="store_true",
         help="linear probing",
     )
-    parser.set_defaults(linear=True)
+    parser.set_defaults(linear=False)
     # parser.add_argument('--global_pool', action='store_true')
     # parser.set_defaults(global_pool=True)
     # parser.add_argument('--cls_token', action='store_false', dest='global_pool',
@@ -257,7 +257,7 @@ def main(args):
         # manually initialize fc layer
         # trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
 
-        if not args.linear:
+        if args.linear:
             # freeze all but the head
             for _, p in model.named_parameters():
                 p.requires_grad = False
