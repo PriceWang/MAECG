@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-26 03:00:21
+LastEditTime: 2024-02-10 06:39:05
 FilePath: /mae/main_finetune.py
 Description: Finetune
 
@@ -12,31 +12,26 @@ Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 import argparse
 import datetime
 import json
-import numpy as np
 import os
 import time
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-from torch.utils.tensorboard import SummaryWriter
-
-import timm
-
-# assert timm.__version__ == "0.3.2" # version check
-from timm.models.layers import trunc_normal_
 from timm.data.mixup import Mixup
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
+# assert timm.__version__ == "0.3.2" # version check
+from timm.models.layers import trunc_normal_
+from torch.utils.tensorboard import SummaryWriter
+
 import utils.lr_decay as lrd
 import utils.misc as misc
-
-from utils.pos_embed import interpolate_pos_embed
-from utils.misc import NativeScalerWithGradNormCount as NativeScaler
-
 import vit_mae
-
-from engine_finetune import train_one_epoch, evaluate
+from engine_finetune import evaluate, train_one_epoch
+from utils.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.pos_embed import interpolate_pos_embed
 
 
 def get_args_parser():

@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-23 14:32:06
+LastEditTime: 2024-02-10 06:38:55
 FilePath: /mae/main_pretrain.py
 Description: Pretrain
 
@@ -12,28 +12,24 @@ Copyright (c) 2023 by Guoxin Wang, All Rights Reserved.
 import argparse
 import datetime
 import json
-import numpy as np
 import os
 import time
 from pathlib import Path
-from utils.data_utils import processedPreTrainDataset
 
+import numpy as np
+
+# assert timm.__version__ == "0.3.2"  # version check
+import timm.optim.optim_factory as optim_factory
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.tensorboard import SummaryWriter
 
-import timm
-
-# assert timm.__version__ == "0.3.2"  # version check
-import timm.optim.optim_factory as optim_factory
-
 import utils.misc as misc
+import vit_mae
+from engine_pretrain import train_one_epoch
+from utils.data_utils import processedPreTrainDataset
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
-
-import vit_mae
-
-from engine_pretrain import train_one_epoch
 
 
 def get_args_parser():

@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-26 03:00:48
+LastEditTime: 2024-02-10 07:33:12
 FilePath: /mae/main_finetune_de.py
 Description: Finetune with decoder
 
@@ -12,27 +12,23 @@ Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 import argparse
 import datetime
 import json
-import numpy as np
 import os
 import time
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.tensorboard import SummaryWriter
 
-import timm
-
-# assert timm.__version__ == "0.3.2" # version check
-
 import utils.lr_decay as lrd
 import utils.misc as misc
-
-from utils.pos_embed import interpolate_pos_embed
-from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 import vit_mae
-
 from engine_finetune_de import train_one_epoch
+from utils.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.pos_embed import interpolate_pos_embed
+
+# assert timm.__version__ == "0.3.2" # version check
 
 
 def get_args_parser():

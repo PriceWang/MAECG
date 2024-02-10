@@ -9,6 +9,7 @@
 # BEiT: https://github.com/microsoft/unilm/tree/master/beit
 # --------------------------------------------------------
 
+import argparse
 import builtins
 import datetime
 import os
@@ -19,7 +20,6 @@ from pathlib import Path
 import torch
 import torch.distributed as dist
 from torch import inf
-import argparse
 
 
 def str2bool(v):

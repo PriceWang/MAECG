@@ -2,13 +2,15 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-01-26 02:02:50
+ * @LastEditTime: 2024-02-10 07:43:47
  * @FilePath: /mae/README.md
- * @Description: 
- * 
- * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 -->
+
 ## MAECG: A PyTorch Implementation
+
 <p align="center">
   <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="1080">
 </p>
@@ -22,6 +24,7 @@ aaaa
 This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) and this repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
 
 ### Catalog
+
 - [x] Pre-training code
 - [x] Pre-trained checkpoints
 - [x] Fine-tuning code
@@ -29,6 +32,7 @@ This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](http
 - [x] Visualization demo
 
 ### Requirement
+
 Install the required package:
 
 ```
@@ -42,6 +46,7 @@ conda activate maecg
 ```
 
 ### Data Generation
+
 To generate unlabelled ECG datasets, run the following command:
 
 ```
@@ -54,7 +59,7 @@ python dataprocess.py \
     --expansion 1
 ```
 
-- Here we creat samples of length: `width` * 2.
+- Here we creat samples of length: `width` \* 2.
 - `expansion` is a simple replication to extend dataset.
 
 To generate labelled ECG datasets, run the following command:
@@ -144,6 +149,7 @@ The following table provides the generated datasets used in the paper:
 </tbody></table>
 
 ### Pre-training
+
 To pre-train ViT-Base (recommended default) with multi-node distributed training, run the following on 1 nodes with 2 GPUs each:
 
 ```
@@ -159,7 +165,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
     --log_dir ${log_dir} \
 ```
 
-- Here the effective batch size is 256 (`batch_size` per gpu) * 1 (nodes) * 2 (gpus per node) * 4 (`accum_iter`) = 2048.
+- Here the effective batch size is 256 (`batch_size` per gpu) _ 1 (nodes) _ 2 (gpus per node) \* 4 (`accum_iter`) = 2048.
 - To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
 - Set `mask_ratio` for mask ratio.
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
@@ -190,7 +196,9 @@ The following table provides the pre-trained checkpoints used in the paper:
 </tbody></table>
 
 ### Fine-tuning with pre-trained checkpoints
+
 #### Fine-tuning
+
 Currently, we implemented fine-tuning by freezing encoder.
 
 To fine-tune with multi-node distributed training, run the following command:
@@ -208,7 +216,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --log_dir ${log_dir}
 ```
 
-- Here the effective batch size is 1024 (`batch_size` per gpu) * 1 (node) * 1 (gpus per node) = 1024.
+- Here the effective batch size is 1024 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 1024.
 - Set `--train_path ${train_path_1} ${train_path_2} ...` to fine-tune with multiple datasets
 - See [MAE fine-tuning](https://github.com/facebookresearch/mae/blob/main/FINETUNE.md) for detailed parameter setting.
 - Training time is ~53m in 1 RTX3090 GPU.
@@ -229,7 +237,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --log_dir ${log_dir}
 ```
 
-- Here the effective batch size is 32 (`batch_size` per gpu) * 1 (node) * 1 (gpus per node) = 32.
+- Here the effective batch size is 32 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 32.
 - Training time is ~10m in 1 RTX3090 GPU.
 
 Script for denoising:
@@ -411,6 +419,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 </tbody></table>
 
 ### Visualization demo
+
 Run our interactive visualization demo and plot figures with [Jupyter notebook](Visualize.ipynb):
 
 <p align="center">
@@ -418,4 +427,5 @@ Run our interactive visualization demo and plot figures with [Jupyter notebook](
 </p>
 
 ### License
+
 This project is licensed under the terms of the MIT license. See [LICENSE](LICENSE) for details.
