@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 06:38:55
+LastEditTime: 2024-02-11 05:02:24
 FilePath: /mae/main_pretrain.py
 Description: Pretrain
 
@@ -22,6 +22,7 @@ import numpy as np
 import timm.optim.optim_factory as optim_factory
 import torch
 import torch.backends.cudnn as cudnn
+from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
 
 import utils.misc as misc
@@ -56,20 +57,24 @@ def get_args_parser():
         metavar="MODEL",
         help="Name of model to train",
     )
-
     parser.add_argument(
         "--mask_ratio",
         default=0.6,
         type=float,
         help="Masking ratio (percentage of removed patches).",
     )
-
     parser.add_argument(
         "--norm_pix_loss",
         action="store_true",
         help="Use (per-patch) normalized pixels as targets for computing loss",
     )
     parser.set_defaults(norm_pix_loss=False)
+
+    parser.add_argument("--model_ema", action="store_true", default=False)
+    parser.add_argument("--model_ema_decay", type=float, default=0.99996, help="")
+    parser.add_argument(
+        "--model_ema_force_cpu", action="store_true", default=False, help=""
+    )
 
     # Optimizer parameters
     parser.add_argument(
@@ -205,6 +210,16 @@ def main(args):
 
     model.to(device)
 
+    model_ema = None
+    if args.model_ema:
+        # Important to create EMA model after cuda(), DP wrapper, and AMP but before SyncBN and DDP wrapper
+        model_ema = ModelEma(
+            model,
+            decay=args.model_ema_decay,
+            device="cpu" if args.model_ema_force_cpu else "",
+            resume="",
+        )
+
     model_without_ddp = model
     print("Model = %s" % str(model_without_ddp))
 
@@ -235,6 +250,7 @@ def main(args):
         args=args,
         model_without_ddp=model_without_ddp,
         optimizer=optimizer,
+        model_ema=model_ema,
         loss_scaler=loss_scaler,
     )
 
@@ -250,6 +266,7 @@ def main(args):
             device,
             epoch,
             loss_scaler,
+            model_ema=model_ema,
             log_writer=log_writer,
             args=args,
         )
@@ -262,6 +279,7 @@ def main(args):
                     optimizer=optimizer,
                     loss_scaler=loss_scaler,
                     epoch=epoch,
+                    model_ema=model_ema,
                 )
 
         log_stats = {

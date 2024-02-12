@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 06:39:05
+LastEditTime: 2024-02-12 03:31:27
 FilePath: /mae/main_finetune.py
 Description: Finetune
 
@@ -24,6 +24,7 @@ from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
 # assert timm.__version__ == "0.3.2" # version check
 from timm.models.layers import trunc_normal_
+from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
 
 import utils.lr_decay as lrd
@@ -57,6 +58,12 @@ def get_args_parser():
         type=str,
         metavar="MODEL",
         help="Name of model to train",
+    )
+
+    parser.add_argument("--model_ema", action="store_true", default=False)
+    parser.add_argument("--model_ema_decay", type=float, default=0.99996, help="")
+    parser.add_argument(
+        "--model_ema_force_cpu", action="store_true", default=False, help=""
     )
 
     # Optimizer parameters
@@ -355,6 +362,16 @@ def main(args):
 
     model.to(device)
 
+    model_ema = None
+    if args.model_ema:
+        # Important to create EMA model after cuda(), DP wrapper, and AMP but before SyncBN and DDP wrapper
+        model_ema = ModelEma(
+            model,
+            decay=args.model_ema_decay,
+            device="cpu" if args.model_ema_force_cpu else "",
+            resume="",
+        )
+
     model_without_ddp = model
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
@@ -400,13 +417,14 @@ def main(args):
         args=args,
         model_without_ddp=model_without_ddp,
         optimizer=optimizer,
+        model_ema=model_ema,
         loss_scaler=loss_scaler,
     )
 
     if args.eval:
-        test_stats = evaluate(data_loader_val, model, device)
+        test_stats = evaluate(data_loader_val, model, model_ema, device)
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%, EMA: {test_stats['acc1_ema']:.1f}%"
         )
         exit(0)
 
@@ -425,14 +443,15 @@ def main(args):
             epoch,
             loss_scaler,
             args.clip_grad,
+            model_ema,
             mixup_fn,
             log_writer=log_writer,
             args=args,
         )
 
-        test_stats = evaluate(data_loader_val, model, device)
+        test_stats = evaluate(data_loader_val, model, model_ema, device)
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%, EMA: {test_stats['acc1_ema']:.1f}%"
         )
         max_accuracy = max(max_accuracy, test_stats["acc1"])
         print(f"Max accuracy: {max_accuracy:.2f}%")
@@ -445,6 +464,7 @@ def main(args):
                 optimizer=optimizer,
                 loss_scaler=loss_scaler,
                 epoch=epoch,
+                model_ema=model_ema,
                 max_acc=True,
             )
 
@@ -452,6 +472,9 @@ def main(args):
             log_writer.add_scalar("perf/test_acc1", test_stats["acc1"], epoch)
             log_writer.add_scalar("perf/test_acc3", test_stats["acc3"], epoch)
             log_writer.add_scalar("perf/test_loss", test_stats["loss"], epoch)
+            log_writer.add_scalar("perf/test_acc1_ema", test_stats["acc1_ema"], epoch)
+            log_writer.add_scalar("perf/test_acc3_ema", test_stats["acc3_ema"], epoch)
+            log_writer.add_scalar("perf/test_loss_ema", test_stats["loss_ema"], epoch)
 
         log_stats = {
             **{f"train_{k}": v for k, v in train_stats.items()},

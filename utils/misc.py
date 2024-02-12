@@ -12,6 +12,7 @@
 import argparse
 import builtins
 import datetime
+import io
 import os
 import time
 from collections import defaultdict, deque
@@ -19,6 +20,7 @@ from pathlib import Path
 
 import torch
 import torch.distributed as dist
+from timm.utils import get_state_dict
 from torch import inf
 
 
@@ -198,6 +200,16 @@ class MetricLogger(object):
         )
 
 
+def _load_checkpoint_for_ema(model_ema, checkpoint):
+    """
+    Workaround for ModelEma._load_checkpoint to accept an already-loaded object
+    """
+    mem_file = io.BytesIO()
+    torch.save({"state_dict_ema": checkpoint}, mem_file)
+    mem_file.seek(0)
+    model_ema._load_checkpoint(mem_file)
+
+
 def setup_for_distributed(is_master):
     """
     This function disables printing when not in master process
@@ -350,7 +362,14 @@ def get_grad_norm_(parameters, norm_type: float = 2.0) -> torch.Tensor:
 
 
 def save_model(
-    args, epoch, model, model_without_ddp, optimizer, loss_scaler, max_acc=False
+    args,
+    epoch,
+    model,
+    model_without_ddp,
+    optimizer,
+    loss_scaler,
+    model_ema,
+    max_acc=False,
 ):
     output_dir = Path(args.output_dir)
     if max_acc:
@@ -360,13 +379,23 @@ def save_model(
     if loss_scaler is not None:
         checkpoint_paths = [output_dir / ("checkpoint-%s.pth" % epoch_name)]
         for checkpoint_path in checkpoint_paths:
-            to_save = {
-                "model": model_without_ddp.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "epoch": epoch,
-                "scaler": loss_scaler.state_dict(),
-                "args": args,
-            }
+            if args.model_ema:
+                to_save = {
+                    "model": model_without_ddp.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "epoch": epoch,
+                    "model_ema": get_state_dict(model_ema),
+                    "scaler": loss_scaler.state_dict(),
+                    "args": args,
+                }
+            else:
+                to_save = {
+                    "model": model_without_ddp.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "epoch": epoch,
+                    "scaler": loss_scaler.state_dict(),
+                    "args": args,
+                }
 
             save_on_master(to_save, checkpoint_path)
     else:
@@ -384,7 +413,7 @@ def save_model(
             os.remove(old_ckpt)
 
 
-def load_model(args, model_without_ddp, optimizer, loss_scaler):
+def load_model(args, model_without_ddp, optimizer, model_ema, loss_scaler):
     if args.auto_resume and len(args.resume) == 0:
         output_dir = Path(args.output_dir)
         import glob
@@ -407,6 +436,8 @@ def load_model(args, model_without_ddp, optimizer, loss_scaler):
         else:
             checkpoint = torch.load(args.resume, map_location="cpu")
         model_without_ddp.load_state_dict(checkpoint["model"])
+        if args.model_ema and "model_ema" in checkpoint:
+            _load_checkpoint_for_ema(model_ema, checkpoint["model_ema"])
         print("Resume checkpoint %s" % args.resume)
         if (
             "optimizer" in checkpoint

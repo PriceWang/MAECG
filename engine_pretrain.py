@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 08:09:44
+LastEditTime: 2024-02-11 04:41:20
 FilePath: /mae/engine_pretrain.py
 Description: 
 
@@ -11,9 +11,10 @@ Copyright (c) 2023 by Guoxin Wang, All Rights Reserved.
 
 import math
 import sys
-from typing import Iterable
+from typing import Iterable, Optional
 
 import torch
+from timm.utils import ModelEma
 
 import utils.lr_sched as lr_sched
 import utils.misc as misc
@@ -26,6 +27,7 @@ def train_one_epoch(
     device: torch.device,
     epoch: int,
     loss_scaler,
+    model_ema: Optional[ModelEma] = None,
     log_writer=None,
     args=None,
 ):
@@ -76,7 +78,8 @@ def train_one_epoch(
             optimizer.zero_grad()
 
         torch.cuda.synchronize()
-
+        if model_ema is not None:
+            model_ema.update(model)
         metric_logger.update(loss=loss_value)
 
         lr = optimizer.param_groups[0]["lr"]
