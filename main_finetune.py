@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-12 03:31:27
+LastEditTime: 2024-02-12 15:21:43
 FilePath: /mae/main_finetune.py
 Description: Finetune
 
@@ -32,6 +32,7 @@ import utils.misc as misc
 import vit_mae
 from engine_finetune import evaluate, train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
 
 
@@ -196,7 +197,12 @@ def get_args_parser():
     parser.add_argument("--seed", default=0, type=int)
     parser.add_argument("--resume", default="", help="resume from checkpoint")
 
-    parser.add_argument("--auto_resume", action="store_true")
+    parser.add_argument("--auto_resume", type=str2bool, default=True)
+    parser.add_argument("--save_ckpt", type=str2bool, default=True)
+    parser.add_argument("--save_ckpt_freq", default=1, type=int)
+    parser.add_argument("--save_ckpt_num", default=1, type=int)
+
+    parser.add_argument("--save_max", action="store_true", help="save max accuracy")
     parser.add_argument(
         "--start_epoch", default=0, type=int, metavar="N", help="start epoch"
     )
@@ -456,7 +462,15 @@ def main(args):
         max_accuracy = max(max_accuracy, test_stats["acc1"])
         print(f"Max accuracy: {max_accuracy:.2f}%")
 
-        if args.output_dir and max_accuracy == test_stats["acc1"]:
+        save_flag = False
+        if args.output_dir and args.save_ckpt:
+            if args.save_max:
+                if max_accuracy == test_stats["acc1"]:
+                    save_flag = True
+            else:
+                if (epoch + 1) % args.save_ckpt_freq == 0 or epoch + 1 == args.epochs:
+                    save_flag = True
+        if save_flag:
             misc.save_model(
                 args=args,
                 model=model,
@@ -465,7 +479,6 @@ def main(args):
                 loss_scaler=loss_scaler,
                 epoch=epoch,
                 model_ema=model_ema,
-                max_acc=True,
             )
 
         if log_writer is not None:

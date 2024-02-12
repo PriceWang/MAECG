@@ -369,10 +369,9 @@ def save_model(
     optimizer,
     loss_scaler,
     model_ema,
-    max_acc=False,
 ):
     output_dir = Path(args.output_dir)
-    if max_acc:
+    if args.save_max:
         epoch_name = "max_acc"
     else:
         epoch_name = str(epoch)
@@ -406,7 +405,7 @@ def save_model(
             client_state=client_state,
         )
 
-    if is_main_process() and isinstance(epoch, int) and not max_acc:
+    if is_main_process() and isinstance(epoch, int) and not args.save_max:
         to_del = epoch - args.save_ckpt_num * args.save_ckpt_freq
         old_ckpt = output_dir / ("checkpoint-%s.pth" % to_del)
         if os.path.exists(old_ckpt):
@@ -418,14 +417,19 @@ def load_model(args, model_without_ddp, optimizer, model_ema, loss_scaler):
         output_dir = Path(args.output_dir)
         import glob
 
-        all_checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*.pth"))
-        latest_ckpt = -1
-        for ckpt in all_checkpoints:
-            t = ckpt.split("-")[-1].split(".")[0]
-            if t.isdigit():
-                latest_ckpt = max(int(t), latest_ckpt)
-        if latest_ckpt >= 0:
-            args.resume = os.path.join(output_dir, "checkpoint-%d.pth" % latest_ckpt)
+        if args.save_max:
+            args.resume = os.path.join(output_dir, "checkpoint-max_acc.pth")
+        else:
+            all_checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*.pth"))
+            latest_ckpt = -1
+            for ckpt in all_checkpoints:
+                t = ckpt.split("-")[-1].split(".")[0]
+                if t.isdigit():
+                    latest_ckpt = max(int(t), latest_ckpt)
+            if latest_ckpt >= 0:
+                args.resume = os.path.join(
+                    output_dir, "checkpoint-%d.pth" % latest_ckpt
+                )
         print("Auto resume checkpoint: %s" % args.resume)
 
     if args.resume:
@@ -436,8 +440,11 @@ def load_model(args, model_without_ddp, optimizer, model_ema, loss_scaler):
         else:
             checkpoint = torch.load(args.resume, map_location="cpu")
         model_without_ddp.load_state_dict(checkpoint["model"])
-        if args.model_ema and "model_ema" in checkpoint:
-            _load_checkpoint_for_ema(model_ema, checkpoint["model_ema"])
+        if args.model_ema:
+            if "model_ema" in checkpoint:
+                _load_checkpoint_for_ema(model_ema, checkpoint["model_ema"])
+            else:
+                _load_checkpoint_for_ema(model_ema, checkpoint["model"])
         print("Resume checkpoint %s" % args.resume)
         if (
             "optimizer" in checkpoint
