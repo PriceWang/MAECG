@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-12 15:21:43
+LastEditTime: 2024-02-14 11:47:36
 FilePath: /mae/main_finetune.py
 Description: Finetune
 
@@ -428,9 +428,13 @@ def main(args):
     )
 
     if args.eval:
-        test_stats = evaluate(data_loader_val, model, model_ema, device)
+        test_stats = (
+            evaluate(data_loader_val, model_ema.ema, device)
+            if args.model_ema
+            else evaluate(data_loader_val, model, device)
+        )
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%, EMA: {test_stats['acc1_ema']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
         exit(0)
 
@@ -455,9 +459,9 @@ def main(args):
             args=args,
         )
 
-        test_stats = evaluate(data_loader_val, model, model_ema, device)
+        test_stats = evaluate(data_loader_val, model, device)
         print(
-            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%, EMA: {test_stats['acc1_ema']:.1f}%"
+            f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
         max_accuracy = max(max_accuracy, test_stats["acc1"])
         print(f"Max accuracy: {max_accuracy:.2f}%")
@@ -485,9 +489,6 @@ def main(args):
             log_writer.add_scalar("perf/test_acc1", test_stats["acc1"], epoch)
             log_writer.add_scalar("perf/test_acc3", test_stats["acc3"], epoch)
             log_writer.add_scalar("perf/test_loss", test_stats["loss"], epoch)
-            log_writer.add_scalar("perf/test_acc1_ema", test_stats["acc1_ema"], epoch)
-            log_writer.add_scalar("perf/test_acc3_ema", test_stats["acc3_ema"], epoch)
-            log_writer.add_scalar("perf/test_loss_ema", test_stats["loss_ema"], epoch)
 
         log_stats = {
             **{f"train_{k}": v for k, v in train_stats.items()},

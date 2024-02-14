@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-12 12:06:16
+LastEditTime: 2024-02-14 11:48:35
 FilePath: /mae/engine_finetune.py
 Description: 
 
@@ -113,7 +113,7 @@ def train_one_epoch(
 
 
 @torch.no_grad()
-def evaluate(data_loader, model, model_ema, device):
+def evaluate(data_loader, model, device):
     criterion = torch.nn.CrossEntropyLoss()
 
     metric_logger = misc.MetricLogger(delimiter="  ")
@@ -135,31 +135,18 @@ def evaluate(data_loader, model, model_ema, device):
         with torch.cuda.amp.autocast():
             output = model(samples)
             loss = criterion(output, target)
-            output_ema = model_ema.ema(samples)
-            loss_ema = criterion(output_ema, target)
 
         acc1, acc3 = accuracy(output, target, topk=(1, 3))
-        acc1_ema, acc3_ema = accuracy(output_ema, target, topk=(1, 3))
 
         batch_size = samples.shape[0]
         metric_logger.update(loss=loss.item())
         metric_logger.meters["acc1"].update(acc1.item(), n=batch_size)
         metric_logger.meters["acc3"].update(acc3.item(), n=batch_size)
-        metric_logger.update(loss_ema=loss_ema.item())
-        metric_logger.meters["acc1_ema"].update(acc1_ema.item(), n=batch_size)
-        metric_logger.meters["acc3_ema"].update(acc3_ema.item(), n=batch_size)
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     print(
         "* Acc@1 {top1.global_avg:.3f} Acc@3 {top3.global_avg:.3f} loss {losses.global_avg:.3f}".format(
             top1=metric_logger.acc1, top3=metric_logger.acc3, losses=metric_logger.loss
-        )
-    )
-    print(
-        "* Acc@1_ema {top1.global_avg:.3f} Acc@3_ema {top3.global_avg:.3f} loss_ema {losses.global_avg:.3f}".format(
-            top1=metric_logger.acc1_ema,
-            top3=metric_logger.acc3_ema,
-            losses=metric_logger.loss_ema,
         )
     )
 

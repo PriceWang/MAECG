@@ -11,9 +11,10 @@ Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 
 import math
 import sys
-from typing import Iterable
+from typing import Iterable, Optional
 
 import torch
+from timm.utils import ModelEma
 
 import utils.lr_sched as lr_sched
 import utils.misc as misc
@@ -43,6 +44,7 @@ def train_one_epoch(
     epoch: int,
     loss_scaler,
     max_norm: float = 0,
+    model_ema: Optional[ModelEma] = None,
     log_writer=None,
     args=None,
 ):
@@ -93,7 +95,8 @@ def train_one_epoch(
             optimizer.zero_grad()
 
         torch.cuda.synchronize()
-
+        if model_ema is not None:
+            model_ema.update(model)
         metric_logger.update(loss=loss_value)
         min_lr = 10.0
         max_lr = 0.0

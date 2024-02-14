@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 07:33:12
+LastEditTime: 2024-02-14 12:05:33
 FilePath: /mae/main_finetune_de.py
 Description: Finetune with decoder
 
@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
 
 import utils.lr_decay as lrd
@@ -54,6 +55,12 @@ def get_args_parser():
         type=str,
         metavar="MODEL",
         help="Name of model to train",
+    )
+
+    parser.add_argument("--model_ema", action="store_true", default=False)
+    parser.add_argument("--model_ema_decay", type=float, default=0.99996, help="")
+    parser.add_argument(
+        "--model_ema_force_cpu", action="store_true", default=False, help=""
     )
 
     # Optimizer parameters
@@ -268,6 +275,16 @@ def main(args):
 
     model.to(device)
 
+    model_ema = None
+    if args.model_ema:
+        # Important to create EMA model after cuda(), DP wrapper, and AMP but before SyncBN and DDP wrapper
+        model_ema = ModelEma(
+            model,
+            decay=args.model_ema_decay,
+            device="cpu" if args.model_ema_force_cpu else "",
+            resume="",
+        )
+
     model_without_ddp = model
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
@@ -303,6 +320,7 @@ def main(args):
         args=args,
         model_without_ddp=model_without_ddp,
         optimizer=optimizer,
+        model_ema=model_ema,
         loss_scaler=loss_scaler,
     )
 
@@ -319,6 +337,7 @@ def main(args):
             epoch,
             loss_scaler,
             args.clip_grad,
+            model_ema,
             log_writer=log_writer,
             args=args,
         )
@@ -332,6 +351,7 @@ def main(args):
                     optimizer=optimizer,
                     loss_scaler=loss_scaler,
                     epoch=epoch,
+                    model_ema=model_ema,
                 )
 
         log_stats = {
