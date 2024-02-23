@@ -379,24 +379,15 @@ def save_model(
     if loss_scaler is not None:
         checkpoint_paths = [output_dir / ("checkpoint-%s.pth" % epoch_name)]
         for checkpoint_path in checkpoint_paths:
+            to_save = {
+                "model": model_without_ddp.state_dict(),
+                "optimizer": optimizer.state_dict(),
+                "epoch": epoch,
+                "scaler": loss_scaler.state_dict(),
+                "args": args,
+            }
             if args.model_ema:
-                to_save = {
-                    "model": model_without_ddp.state_dict(),
-                    "optimizer": optimizer.state_dict(),
-                    "epoch": epoch,
-                    "model_ema": get_state_dict(model_ema),
-                    "scaler": loss_scaler.state_dict(),
-                    "args": args,
-                }
-            else:
-                to_save = {
-                    "model": model_without_ddp.state_dict(),
-                    "optimizer": optimizer.state_dict(),
-                    "epoch": epoch,
-                    "scaler": loss_scaler.state_dict(),
-                    "args": args,
-                }
-
+                to_save["model_ema"] = get_state_dict(model_ema)
             save_on_master(to_save, checkpoint_path)
     else:
         client_state = {"epoch": epoch}
