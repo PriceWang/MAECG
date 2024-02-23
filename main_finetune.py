@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-14 11:47:36
-FilePath: /mae/main_finetune.py
+LastEditTime: 2024-02-23 08:07:45
+FilePath: /maecg/main_finetune.py
 Description: Finetune
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -202,7 +202,6 @@ def get_args_parser():
     parser.add_argument("--save_ckpt_freq", default=1, type=int)
     parser.add_argument("--save_ckpt_num", default=1, type=int)
 
-    parser.add_argument("--save_max", action="store_true", help="save max accuracy")
     parser.add_argument(
         "--start_epoch", default=0, type=int, metavar="N", help="start epoch"
     )
@@ -419,12 +418,14 @@ def main(args):
 
     print("criterion = %s" % str(criterion))
 
+    save_max = False
     misc.load_model(
         args=args,
         model_without_ddp=model_without_ddp,
         optimizer=optimizer,
         model_ema=model_ema,
         loss_scaler=loss_scaler,
+        save_max=save_max,
     )
 
     if args.eval:
@@ -468,7 +469,7 @@ def main(args):
 
         save_flag = False
         if args.output_dir and args.save_ckpt:
-            if args.save_max:
+            if save_max:
                 if max_accuracy == test_stats["acc1"]:
                     save_flag = True
             else:
