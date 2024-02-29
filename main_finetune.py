@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-23 08:07:45
+LastEditTime: 2024-02-29 16:46:13
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -362,8 +362,8 @@ def main(args):
             # freeze all but the head
             for _, p in model.named_parameters():
                 p.requires_grad = False
-        for _, p in model.head.named_parameters():
-            p.requires_grad = True
+            for _, p in model.head.named_parameters():
+                p.requires_grad = True
 
     model.to(device)
 
