@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-29 16:46:13
+LastEditTime: 2024-02-29 17:17:51
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -418,14 +418,14 @@ def main(args):
 
     print("criterion = %s" % str(criterion))
 
-    save_max = False
+    save_best = False
     misc.load_model(
         args=args,
         model_without_ddp=model_without_ddp,
         optimizer=optimizer,
         model_ema=model_ema,
         loss_scaler=loss_scaler,
-        save_max=save_max,
+        save_best=save_best,
     )
 
     if args.eval:
@@ -469,7 +469,7 @@ def main(args):
 
         save_flag = False
         if args.output_dir and args.save_ckpt:
-            if save_max:
+            if save_best:
                 if max_accuracy == test_stats["acc1"]:
                     save_flag = True
             else:

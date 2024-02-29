@@ -369,11 +369,11 @@ def save_model(
     optimizer,
     loss_scaler,
     model_ema,
-    save_max=False,
+    save_best=False,
 ):
     output_dir = Path(args.output_dir)
-    if save_max:
-        epoch_name = "max_acc"
+    if save_best:
+        epoch_name = "best"
     else:
         epoch_name = str(epoch)
     if loss_scaler is not None:
@@ -397,7 +397,7 @@ def save_model(
             client_state=client_state,
         )
 
-    if is_main_process() and isinstance(epoch, int) and not save_max:
+    if is_main_process() and isinstance(epoch, int) and not save_best:
         to_del = epoch - args.save_ckpt_num * args.save_ckpt_freq
         old_ckpt = output_dir / ("checkpoint-%s.pth" % to_del)
         if os.path.exists(old_ckpt):
@@ -405,14 +405,14 @@ def save_model(
 
 
 def load_model(
-    args, model_without_ddp, optimizer, model_ema, loss_scaler, save_max=False
+    args, model_without_ddp, optimizer, model_ema, loss_scaler, save_best=False
 ):
     if args.auto_resume and len(args.resume) == 0:
         output_dir = Path(args.output_dir)
         import glob
 
-        if save_max:
-            args.resume = os.path.join(output_dir, "checkpoint-max_acc.pth")
+        if save_best:
+            args.resume = os.path.join(output_dir, "checkpoint-best.pth")
         else:
             all_checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*.pth"))
             latest_ckpt = -1
