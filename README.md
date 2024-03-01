@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-02-10 07:43:47
- * @FilePath: /mae/README.md
+ * @LastEditTime: 2024-03-01 17:52:26
+ * @FilePath: /maecg/README.md
  * @Description:
  *
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
@@ -213,7 +213,8 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --train_path ${train_path}\
     --test_path ${test_path} \
     --output_dir ${output_dir} \
-    --log_dir ${log_dir}
+    --log_dir ${log_dir} \
+    --save_best
 ```
 
 - Here the effective batch size is 1024 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 1024.
@@ -234,7 +235,8 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --test_path ${test_path} \
     --mixup 0.5 \
     --output_dir ${output_dir} \
-    --log_dir ${log_dir}
+    --log_dir ${log_dir} \
+    --save_best
 ```
 
 - Here the effective batch size is 32 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 32.
