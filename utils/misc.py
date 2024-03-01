@@ -369,10 +369,9 @@ def save_model(
     optimizer,
     loss_scaler,
     model_ema,
-    save_best=False,
 ):
     output_dir = Path(args.output_dir)
-    if save_best:
+    if args.save_best:
         epoch_name = "best"
     else:
         epoch_name = str(epoch)
@@ -397,33 +396,30 @@ def save_model(
             client_state=client_state,
         )
 
-    if is_main_process() and isinstance(epoch, int) and not save_best:
+    if is_main_process() and isinstance(epoch, int) and not args.save_best:
         to_del = epoch - args.save_ckpt_num * args.save_ckpt_freq
         old_ckpt = output_dir / ("checkpoint-%s.pth" % to_del)
         if os.path.exists(old_ckpt):
             os.remove(old_ckpt)
 
 
-def load_model(
-    args, model_without_ddp, optimizer, model_ema, loss_scaler, save_best=False
-):
+def load_model(args, model_without_ddp, optimizer, model_ema, loss_scaler):
     if args.auto_resume and len(args.resume) == 0:
         output_dir = Path(args.output_dir)
         import glob
 
-        if save_best:
-            args.resume = os.path.join(output_dir, "checkpoint-best.pth")
-        else:
-            all_checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*.pth"))
-            latest_ckpt = -1
-            for ckpt in all_checkpoints:
-                t = ckpt.split("-")[-1].split(".")[0]
-                if t.isdigit():
-                    latest_ckpt = max(int(t), latest_ckpt)
-            if latest_ckpt >= 0:
-                args.resume = os.path.join(
-                    output_dir, "checkpoint-%d.pth" % latest_ckpt
-                )
+        all_checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*.pth"))
+        latest_ckpt = -1
+        for ckpt in all_checkpoints:
+            t = ckpt.split("-")[-1].split(".")[0]
+            if t == "best":
+                args.resume = os.path.join(output_dir, "checkpoint-best.pth")
+                latest_ckpt = -1
+                break
+            if t.isdigit():
+                latest_ckpt = max(int(t), latest_ckpt)
+        if latest_ckpt >= 0:
+            args.resume = os.path.join(output_dir, "checkpoint-%d.pth" % latest_ckpt)
         print("Auto resume checkpoint: %s" % args.resume)
 
     if args.resume:
