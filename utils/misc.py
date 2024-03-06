@@ -369,9 +369,10 @@ def save_model(
     optimizer,
     loss_scaler,
     model_ema,
+    save_best=False,
 ):
     output_dir = Path(args.output_dir)
-    if args.save_best:
+    if save_best:
         epoch_name = "best"
     else:
         epoch_name = str(epoch)
@@ -396,7 +397,7 @@ def save_model(
             client_state=client_state,
         )
 
-    if is_main_process() and isinstance(epoch, int) and not args.save_best:
+    if is_main_process() and isinstance(epoch, int) and not save_best:
         to_del = epoch - args.save_ckpt_num * args.save_ckpt_freq
         old_ckpt = output_dir / ("checkpoint-%s.pth" % to_del)
         if os.path.exists(old_ckpt):

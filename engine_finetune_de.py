@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:04:28
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 08:10:03
-FilePath: /mae/engine_finetune_de.py
+LastEditTime: 2024-03-06 16:54:58
+FilePath: /maecg/engine_finetune_de.py
 Description: 
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -69,9 +69,14 @@ def train_one_epoch(
             lr_sched.adjust_learning_rate(
                 optimizer, data_iter_step / len(data_loader) + epoch, args
             )
-
-        samples = samples.to(device, non_blocking=True)
-        targets = targets.to(device, non_blocking=True)
+        if not isinstance(samples, list):
+            samples = samples.to(device, non_blocking=True)
+        if len(samples.shape) == 2:
+            samples = samples.unsqueeze(1)
+        if not isinstance(targets, list):
+            targets = targets.to(device, non_blocking=True)
+        if len(targets.shape) == 2:
+            targets = targets.unsqueeze(1)
 
         with torch.cuda.amp.autocast():
             loss = loss_fn(model.module, samples, targets)

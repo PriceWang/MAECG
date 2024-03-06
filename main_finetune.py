@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-01 18:00:09
+LastEditTime: 2024-03-06 16:47:32
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -483,6 +483,7 @@ def main(args):
                 loss_scaler=loss_scaler,
                 epoch=epoch,
                 model_ema=model_ema,
+                save_best=args.save_best,
             )
 
         if log_writer is not None:

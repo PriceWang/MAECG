@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-14 11:48:35
-FilePath: /mae/engine_finetune.py
+LastEditTime: 2024-03-06 16:52:49
+FilePath: /maecg/engine_finetune.py
 Description: 
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -57,7 +57,10 @@ def train_one_epoch(
                 optimizer, data_iter_step / len(data_loader) + epoch, args
             )
 
-        samples = samples.to(device, non_blocking=True)
+        if not isinstance(samples, list):
+            samples = samples.to(device, non_blocking=True)
+        if len(samples.shape) == 2:
+            samples = samples.unsqueeze(1)
         targets = targets.to(device, non_blocking=True)
 
         if mixup_fn is not None:

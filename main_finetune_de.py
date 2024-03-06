@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-14 12:05:33
-FilePath: /mae/main_finetune_de.py
+LastEditTime: 2024-03-06 16:47:53
+FilePath: /maecg/main_finetune_de.py
 Description: Finetune with decoder
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -27,6 +27,7 @@ import utils.misc as misc
 import vit_mae
 from engine_finetune_de import train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
+from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
 
 # assert timm.__version__ == "0.3.2" # version check
@@ -157,7 +158,8 @@ def get_args_parser():
     parser.add_argument("--seed", default=0, type=int)
     parser.add_argument("--resume", default="", help="resume from checkpoint")
 
-    parser.add_argument("--auto_resume", action="store_true")
+    parser.add_argument("--auto_resume", type=str2bool, default=True)
+    parser.add_argument("--save_ckpt", type=str2bool, default=True)
     parser.add_argument("--save_ckpt_freq", default=1, type=int)
     parser.add_argument("--save_ckpt_num", default=1, type=int)
 
@@ -342,7 +344,7 @@ def main(args):
             args=args,
         )
 
-        if args.output_dir:
+        if args.output_dir and args.save_ckpt:
             if (epoch + 1) % args.save_ckpt_freq == 0 or epoch + 1 == args.epochs:
                 misc.save_model(
                     args=args,
