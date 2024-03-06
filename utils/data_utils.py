@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 08:10:38
-FilePath: /mae/utils/data_utils.py
+LastEditTime: 2024-03-06 16:49:43
+FilePath: /maecg/utils/data_utils.py
 Description: 
 
 Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
@@ -91,7 +91,6 @@ BEAT_LABEL_2 = {
 
 
 def processedPreTrainDataset(directories):
-    # Lead 2 only, for Guoxin's work in 2023 Mar
     part_list = []
     for directory in directories:
         part_list.extend(
@@ -208,6 +207,75 @@ class RandomNoise(object):
         return data
 
 
+class ECG_Beat_UL(Dataset):
+    def __init__(
+        self,
+        files: list,
+        width: int,
+        channel_names: list,
+        expansion: int,
+        transform: object = None,
+    ) -> None:
+        self.transform = transform
+        self.expansion = expansion
+        self.datas = []
+        pool = Pool()
+        pooltemp = []
+        for file in files:
+            res = pool.apply_async(
+                self.get_unlabeled_datas,
+                args=(
+                    file,
+                    width,
+                    channel_names,
+                ),
+            )
+            pooltemp.append(res)
+        pool.close()
+        pool.join()
+        for temp in pooltemp:
+            data = temp.get()
+            self.datas.extend(data)
+        self.datas = np.array(self.datas)
+        self.datas = torch.tensor(self.datas, dtype=torch.float)
+
+    def __len__(self) -> int:
+        return len(self.datas) * self.expansion
+
+    def __getitem__(self, index: int) -> list:
+        index = index // self.expansion
+        data = self.datas[index]
+        if self.transform:
+            data = self.transform(data)
+        return data
+
+    def get_unlabeled_datas(self, path: str, width: int, channel_names: list = None):
+        data = []
+        try:
+            record = wfdb.rdrecord(path, channel_names=channel_names)
+            for channel in range(record.p_signal.shape[1]):
+                p_signal = record.p_signal[:, channel]
+                p_signal = processing.resample_sig(
+                    p_signal, record.__dict__["fs"], 360
+                )[0]
+                p_signal = nk.ecg_clean(p_signal, sampling_rate=360)
+                _, rpeaks = nk.ecg_peaks(p_signal, sampling_rate=360)
+                for i in range(len(rpeaks["ECG_R_Peaks"])):
+                    if (
+                        rpeaks["ECG_R_Peaks"][i] - width < 0
+                        or rpeaks["ECG_R_Peaks"][i] + width > len(p_signal) - 1
+                    ):
+                        continue
+                    start_idx = rpeaks["ECG_R_Peaks"][i] - width
+                    end_idx = rpeaks["ECG_R_Peaks"][i] + width
+                    sig = p_signal[start_idx:end_idx]
+                    sig = processing.normalize_bound(sig, -1, 1)
+                    data.append(sig)
+        except:
+            print("Unvailable Record: {}".format(path))
+        return data
+
+
 class ECG_Beat_AF(Dataset):
     def __init__(
         self,
@@ -261,7 +329,6 @@ class ECG_Beat_AF(Dataset):
         label = self.labels[index]
         if self.transform:
             data = self.transform(data)
-        data = data.unsqueeze(0)
         return data, label
 
     def get_labeled_datas(self, path: str, width, channel_names: list = None):
@@ -293,82 +360,6 @@ class ECG_Beat_AF(Dataset):
 
     def get_labels(self) -> list:
         return self.labels.tolist()
-
-
-class ECG_Beat_UL(Dataset):
-    def __init__(
-        self,
-        files: list,
-        width: int,
-        channel_names: list,
-        expansion: int,
-        transform: object = None,
-    ) -> None:
-        self.transform = transform
-        self.expansion = expansion
-        self.datas = []
-        pool = Pool()
-        pooltemp = []
-        for file in files:
-            res = pool.apply_async(
-                self.get_unlabeled_datas,
-                args=(
-                    file,
-                    width,
-                    channel_names,
-                ),
-            )
-            pooltemp.append(res)
-        pool.close()
-        pool.join()
-        for temp in pooltemp:
-            data = temp.get()
-            self.datas.extend(data)
-        self.datas = np.array(self.datas)
-        self.datas = torch.tensor(self.datas, dtype=torch.float)
-
-    def __len__(self) -> int:
-        return len(self.datas) * self.expansion
-
-    def __getitem__(self, index: int) -> list:
-        index = index // self.expansion
-        data = self.datas[index]
-        # if self.transform:
-        #     data = [self.transform(data), self.transform(data)]
-        # else:
-        #     data = [data, data]
-        # data[0] = data[0].unsqueeze(0)
-        # data[1] = data[1].unsqueeze(0)
-
-        if self.transform:
-            data = self.transform(data)
-        return data
-
-    def get_unlabeled_datas(self, path: str, width: int, channel_names: list = None):
-        data = []
-        try:
-            record = wfdb.rdrecord(path, channel_names=channel_names)
-            for channel in range(record.p_signal.shape[1]):
-                p_signal = record.p_signal[:, channel]
-                p_signal = processing.resample_sig(
-                    p_signal, record.__dict__["fs"], 360
-                )[0]
-                p_signal = nk.ecg_clean(p_signal, sampling_rate=360)
-                _, rpeaks = nk.ecg_peaks(p_signal, sampling_rate=360)
-                for i in range(len(rpeaks["ECG_R_Peaks"])):
-                    if (
-                        rpeaks["ECG_R_Peaks"][i] - width < 0
-                        or rpeaks["ECG_R_Peaks"][i] + width > len(p_signal) - 1
-                    ):
-                        continue
-                    start_idx = rpeaks["ECG_R_Peaks"][i] - width
-                    end_idx = rpeaks["ECG_R_Peaks"][i] + width
-                    sig = p_signal[start_idx:end_idx]
-                    sig = processing.normalize_bound(sig, -1, 1)
-                    data.append(sig)
-        except:
-            print("Unvailable Record: {}".format(path))
-        return data
 
 
 class ECG_Beat_AU(Dataset):
@@ -419,7 +410,6 @@ class ECG_Beat_AU(Dataset):
         label = self.labels[index]
         if self.transform:
             data = self.transform(data)
-        data = data.unsqueeze(0)
         return data, label
 
     def get_labeled_datas(self, folder: str, width, channel_names: list = None):
@@ -510,8 +500,6 @@ class ECG_Beat_DN(Dataset):
         data_won = self.datas_won[index]
         if self.transform:
             data_wn = self.transform(data_wn)
-        data_wn = data_wn.unsqueeze(0)
-        data_won = data_won.unsqueeze(0)
         return data_wn, data_won
 
     def get_datas(
