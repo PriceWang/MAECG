@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-03-01 17:52:26
+ * @LastEditTime: 2024-03-11 15:31:24
  * @FilePath: /maecg/README.md
  * @Description:
  *
@@ -93,26 +93,26 @@ The following table provides the generated datasets used in the paper:
 <th style="text-align:center">ECGIDDB</th>
 <!-- TABLE BODY -->
 <tr><td align="left">Unlabelled</td>
-<td align="center"><a href="https://drive.google.com/file/d/1iRiKVuEFlIrSdhk-rLFTPpNy5DkGsJ1j/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/CINC2021_ul.pth">Download</a></td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Arrhythmia Classification (Train)</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/16D2kmHp_ajZW67OTMr89Dmh7dGvNtkEn/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/13dWVe-S1dPzuVSsrnFvxvle1Akle2gv0/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_train.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_train.pth">Download</a></td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Arrhythmia Classification (Valid)</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1ri9ca7CuDix2xOQnD-5Z7Wz_AcWmNOKF/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_valid.pth">Download</a></td>
 <td align="center">X</td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Arrhythmia Classification (Test)</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1HQLwkKOegrTgLHd94gf1scCo2_fdvuUo/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_test.pth">Download</a></td>
 <td align="center">X</td>
 <td align="center">X</td>
 </tr>
@@ -120,31 +120,31 @@ The following table provides the generated datasets used in the paper:
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1q2Y-htBWQtJOHBll3bzLbHbPYqvgwiE0/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_train.pth">Download</a></td>
 </tr>
 <tr><td align="left">Human Identification (Valid)</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1fqe6VyVoowQmATJcaSYHhrSz3bFhecFq/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_valid.pth">Download</a></td>
 </tr>
 <tr><td align="left">Human Identification (Test)</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1wn35Ou5kIaJAlG_peu4lsn4aV2nbBg8j/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_test.pth">Download</a></td>
 </tr>
 <tr><td align="left">Denoising (Train)</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/15zbQ3pVJfugWgVf51bRGnc6wph2paEed/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_dn_train.pth">Download</a></td>
 </tr>
 <tr><td align="left">Denoising (Test)</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
-<td align="center"><a href="https://drive.google.com/file/d/1_EdqbUvmH-bYRxnh-QiQXbdVld3Gspzc/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_dn_test.pth">Download</a></td>
 </tr>
 </tbody></table>
 
@@ -186,12 +186,12 @@ The following table provides the pre-trained checkpoints used in the paper:
 <th style="text-align:center">ViT-Huge</th>
 <!-- TABLE BODY -->
 <tr><td align="left">Pre-trained Checkpoint</td>
-<td align="center"><a href="https://drive.google.com/file/d/1oSd0HqT9KOxtob0Vh260xj_cvu5GELll/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/18kSHlZXpxKMhoq82Ryl8_y56mfvWvnlB/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/1EptUU4Yjm2UCxusBt5OaFmRNCi9mkfjd/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/15KQrAaLg-o3xQGvYteZ6b4aVoVzusgKZ/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/1Nrok2tbRzRwgjJN0ZgoEKhYptpn2kj3e/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/1GJ8cfcNuWFAiCreBC3XpdWdSrVR4QYGM/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Atto.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Tiny.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Small.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Large.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Huge.pth">Download</a></td>
 </tr>
 </tbody></table>
 
@@ -270,8 +270,8 @@ As a sanity check, run evaluation using our fine-tuned models:
 <th style="text-align:center">Human Identification</th>
 <!-- TABLE BODY -->
 <tr><td align="left">Fine-tuned Checkpoint</td>
-<td align="center"><a href="https://drive.google.com/file/d/1ecgRMODPc8SCfi45qDWTLZVcuy3jWmMm/view?usp=drive_link">Download</a></td>
-<td align="center"><a href="https://drive.google.com/file/d/16Ncku76qUAWvoHZBaLnotnFWpE2XvX5I/view?usp=drive_link">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base-AF.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base-ID.pth">Download</a></td>
 </tr>
 <tr><td align="left">Reference Accuracy</td>
 <td align="center">99.622</td>
