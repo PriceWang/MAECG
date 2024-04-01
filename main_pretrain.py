@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-11 05:02:24
-FilePath: /mae/main_pretrain.py
+LastEditTime: 2024-03-27 16:36:51
+FilePath: /maecg/main_pretrain.py
 Description: Pretrain
 
 Copyright (c) 2023 by Guoxin Wang, All Rights Reserved. 
@@ -28,7 +28,6 @@ from torch.utils.tensorboard import SummaryWriter
 import utils.misc as misc
 import vit_mae
 from engine_pretrain import train_one_epoch
-from utils.data_utils import processedPreTrainDataset
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 
@@ -110,9 +109,7 @@ def get_args_parser():
     # Dataset parameters
     parser.add_argument(
         "--data_path",
-        default=[
-            "/home/guoxin/storage/ssd/public/unsupervisedecg/cinc2021_unlabelled/"
-        ],
+        default=[".."],
         nargs="+",
         type=str,
         help="dataset path",
@@ -177,7 +174,8 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = processedPreTrainDataset(args.data_path)
+    dataset_train = [torch.load(dataset) for dataset in args.data_path]
+    dataset_train = torch.utils.data.ConcatDataset(dataset_train)
     print(f"len of the dataset {len(dataset_train)}")
 
     if True:  # args.distributed:
