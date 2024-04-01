@@ -2,30 +2,30 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-10 08:10:11
-FilePath: /mae/dataprocess.py
+LastEditTime: 2024-03-27 17:59:47
+FilePath: /maecg/dataprocess.py
 Description: 
 
 Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
 """
 
 import argparse
+import copy
 import logging
 import os
 from pathlib import Path
 
 import numpy as np
 import torch
-from torch.utils.data import random_split
 
-from utils.data_utils import *
+from utils.data_utils import ECG_Beat_AF, ECG_Beat_AU, ECG_Beat_DN, ECG_Beat_UL
 
 parser = argparse.ArgumentParser(description="Data Processing")
 parser.add_argument(
     "--task",
     required=True,
     type=str,
-    choices=["ul_beat", "af_beat", "af_beat_intra", "au_beat", "dn_beat"],
+    choices=["ul_beat", "af_beat", "au_beat", "dn_beat"],
     help="target task",
 )
 parser.add_argument(
@@ -65,14 +65,16 @@ parser.add_argument(
     help="list of channels to use (with noise)",
 )
 parser.add_argument(
-    "--numclasses",
+    "--num_class",
     default=5,
     type=int,
     help="number of classes",
 )
 parser.add_argument("--expansion", default=1, type=int, help="expansion factor")
-parser.add_argument("--mitdb", action="store_true", help="special for mitdb")
-parser.set_defaults(mitdb=False)
+parser.add_argument(
+    "--inter", default=False, action="store_true", help="inter-patient for mitdb"
+)
+parser.add_argument("--seed", default=0, type=int)
 args = parser.parse_args()
 
 logger = logging.getLogger(__name__)
@@ -84,7 +86,6 @@ logging.basicConfig(
 
 
 def ul_beat() -> None:
-    logger.info("Data Generating for Task {}".format(args.task))
     files = np.array(
         [
             os.path.join(path, file_name.split(".")[0])
@@ -93,7 +94,6 @@ def ul_beat() -> None:
             if file_name.endswith(".hea")
         ]
     )
-    np.random.shuffle(files)
     unlabeled_set = ECG_Beat_UL(
         files=files,
         width=args.width,
@@ -107,9 +107,8 @@ def ul_beat() -> None:
 
 
 def af_beat() -> None:
-    logger.info("Data Generating for Task {}".format(args.task))
     # Uses DS1 DS2 as training set and testing set for MITDB
-    if args.mitdb:
+    if args.inter:
         DS1 = [
             101,
             101,
@@ -182,30 +181,33 @@ def af_beat() -> None:
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            numclasses=args.numclasses,
+            num_class=args.num_class,
         )
-        valid_size = int(0.05 * len(dataset))
-        [train_set, valid_set] = random_split(
-            dataset, [len(dataset) - valid_size, valid_size]
-        )
+        train_size = int(0.9 * len(dataset))
+        train_set = copy.deepcopy(dataset)
+        valid_set = copy.deepcopy(dataset)
+        train_set.signals = dataset.signals[:train_size]
+        train_set.labels = dataset.labels[:train_size]
+        valid_set.signals = dataset.signals[train_size:]
+        valid_set.labels = dataset.labels[train_size:]
         torch.save(
             train_set,
-            "{}/{}_train.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_class),
         )
         torch.save(
             valid_set,
-            "{}/{}_valid.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_class),
         )
         test_set = ECG_Beat_AF(
             files=test_files,
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            numclasses=args.numclasses,
+            num_class=args.num_class,
         )
         torch.save(
             test_set,
-            "{}/{}_test.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_class),
         )
     else:
         files = np.array(
@@ -215,105 +217,39 @@ def af_beat() -> None:
                 if file_name.endswith(".hea")
             ]
         )
-        test_set = ECG_Beat_AF(
-            files=files,
-            width=args.width,
-            channel_names=args.channel_names,
-            expansion=args.expansion,
-            numclasses=args.numclasses,
-        )
-        torch.save(
-            test_set,
-            "{}/{}.pth".format(args.output_dir, args.task),
-        )
-
-
-def af_beat_intra() -> None:
-    logger.info("Data Generating for Task {}".format(args.task))
-    if args.mitdb:
-        DS = [
-            101,
-            101,
-            106,
-            108,
-            109,
-            112,
-            114,
-            115,
-            116,
-            118,
-            119,
-            122,
-            124,
-            201,
-            203,
-            205,
-            207,
-            208,
-            209,
-            215,
-            220,
-            223,
-            230,
-            100,
-            103,
-            105,
-            111,
-            113,
-            117,
-            121,
-            123,
-            200,
-            202,
-            210,
-            212,
-            213,
-            214,
-            219,
-            221,
-            222,
-            228,
-            231,
-            232,
-            233,
-            234,
-        ]
-        files = np.array(
-            [
-                os.path.join(
-                    args.data_path,
-                    str(file_name),
-                )
-                for file_name in DS
-            ]
-        )
         dataset = ECG_Beat_AF(
             files=files,
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            numclasses=args.numclasses,
+            num_class=args.num_class,
         )
-        test_size = int(0.3 * len(dataset))
-        [train_set, valid_set, test_set] = random_split(
-            dataset, [len(dataset) - test_size * 2, test_size, test_size]
-        )
+        train_size = int(0.6 * len(dataset))
+        valid_size = int(0.2 * len(dataset))
+        train_set = copy.deepcopy(dataset)
+        valid_set = copy.deepcopy(dataset)
+        test_set = copy.deepcopy(dataset)
+        train_set.signals = dataset.signals[:train_size]
+        train_set.labels = dataset.labels[:train_size]
+        valid_set.signals = dataset.signals[train_size : train_size + valid_size]
+        valid_set.labels = dataset.labels[train_size : train_size + valid_size]
+        test_set.signals = dataset.signals[train_size + valid_size :]
+        test_set.labels = dataset.labels[train_size + valid_size :]
         torch.save(
             train_set,
-            "{}/{}_train.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_class),
         )
         torch.save(
             valid_set,
-            "{}/{}_valid.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_class),
         )
         torch.save(
             test_set,
-            "{}/{}_test.pth".format(args.output_dir, args.task),
+            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_class),
         )
 
 
 def au_beat() -> None:
-    logger.info("Data Generating for Task {}".format(args.task))
     folders = [
         os.path.join(args.data_path, folder)
         for folder in os.listdir(args.data_path)
@@ -327,9 +263,15 @@ def au_beat() -> None:
     )
     train_size = int(0.6 * len(dataset))
     valid_size = int(0.2 * len(dataset))
-    [train_set, valid_set, test_set] = random_split(
-        dataset, [train_size, valid_size, len(dataset) - train_size - valid_size]
-    )
+    train_set = copy.deepcopy(dataset)
+    valid_set = copy.deepcopy(dataset)
+    test_set = copy.deepcopy(dataset)
+    train_set.signals = dataset.signals[:train_size]
+    train_set.labels = dataset.labels[:train_size]
+    valid_set.signals = dataset.signals[train_size : train_size + valid_size]
+    valid_set.labels = dataset.labels[train_size : train_size + valid_size]
+    test_set.signals = dataset.signals[train_size + valid_size :]
+    test_set.labels = dataset.labels[train_size + valid_size :]
     torch.save(
         train_set,
         "{}/{}_train.pth".format(args.output_dir, args.task),
@@ -345,7 +287,6 @@ def au_beat() -> None:
 
 
 def dn_beat() -> None:
-    logger.info("Data Generating for Task {}".format(args.task))
     folders = [
         os.path.join(args.data_path, folder)
         for folder in os.listdir(args.data_path)
@@ -359,9 +300,12 @@ def dn_beat() -> None:
         expansion=args.expansion,
     )
     train_size = int(0.7 * len(dataset))
-    [train_set, test_set] = random_split(
-        dataset, [train_size, len(dataset) - train_size]
-    )
+    train_set = copy.deepcopy(dataset)
+    test_set = copy.deepcopy(dataset)
+    train_set.signals_wn = dataset.signals_wn[:train_size]
+    train_set.signals_won = dataset.signals_won[:train_size]
+    test_set.signals_wn = dataset.signals_wn[train_size:]
+    test_set.signals_won = dataset.signals_won[train_size:]
     torch.save(
         train_set,
         "{}/{}_train.pth".format(args.output_dir, args.task),
@@ -373,13 +317,14 @@ def dn_beat() -> None:
 
 
 def main() -> None:
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+    logger.info("Data Generating for Task {}".format(args.task))
     if args.task == "ul_beat":
         ul_beat()
     elif args.task == "af_beat":
         af_beat()
-    elif args.task == "af_beat_intra":
-        af_beat_intra()
     elif args.task == "au_beat":
         au_beat()
     elif args.task == "dn_beat":

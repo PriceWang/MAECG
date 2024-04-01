@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-06 16:47:32
+LastEditTime: 2024-04-01 09:22:48
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -20,7 +20,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 from timm.data.mixup import Mixup
-from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
+from timm.loss import SoftTargetCrossEntropy
 
 # assert timm.__version__ == "0.3.2" # version check
 from timm.models.layers import trunc_normal_
@@ -159,9 +159,9 @@ def get_args_parser():
     parser.add_argument(
         "--linear",
         action="store_true",
+        default=False,
         help="linear probing",
     )
-    parser.set_defaults(linear=False)
     # parser.add_argument('--global_pool', action='store_true')
     # parser.set_defaults(global_pool=True)
     # parser.add_argument('--cls_token', action='store_false', dest='global_pool',
@@ -257,11 +257,7 @@ def main(args):
 
     dataset_val = torch.load(args.test_path)
 
-    args.nb_classes = (
-        dataset_val.dataset.numclasses
-        if type(dataset_val) == torch.utils.data.dataset.Subset
-        else dataset_val.numclasses
-    )
+    args.num_class = dataset_val.num_class
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -322,11 +318,11 @@ def main(args):
             switch_prob=args.mixup_switch_prob,
             mode=args.mixup_mode,
             label_smoothing=args.smoothing,
-            num_classes=args.nb_classes,
+            num_classes=args.num_class,
         )
 
     model = vit_mae.__dict__[args.model](
-        mlp_sizes=[args.nb_classes],
+        mlp_sizes=[args.num_class],
         # global_pool=args.global_pool,
     )
 
@@ -412,10 +408,8 @@ def main(args):
     if mixup_fn is not None:
         # smoothing is handled with mixup label transform
         criterion = SoftTargetCrossEntropy()
-    elif args.smoothing > 0.0:
-        criterion = LabelSmoothingCrossEntropy(smoothing=args.smoothing)
     else:
-        criterion = torch.nn.CrossEntropyLoss()
+        criterion = torch.nn.CrossEntropyLoss(label_smoothing=args.smoothing)
 
     print("criterion = %s" % str(criterion))
 
