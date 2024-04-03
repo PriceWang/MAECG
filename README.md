@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-03-11 15:31:24
- * @FilePath: /maecg/README.md
+ * @LastEditTime: 2024-04-03 06:41:03
+ * @FilePath: /guoxin/maecg/README.md
  * @Description:
  *
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
@@ -71,15 +71,15 @@ python dataprocess.py \
     --output_dir ${output_dir} \
     --width 240 \
     --channel_names ${channel_names} \
-    --numclasses 5 \
-    --expansion 1 \
+    --num_class 5 \
+    --expansion 1
 ```
 
 - Choose `task` from "af_beat", "au_beat" and "dn_beat".
 - Set `--prefix ${prefix}` when original data path is nested.
 - Set `--channel_names_wn ${channel_names_wn}` for denoising/decoding.
-- Set `--numclasses 2` or `--numclasses 4` for different classifications.
-- Set `--mitdb` to generate datasets from MITDB with special splits.
+- Set `--num_class 2` or `--num_class 4` for different classifications.
+- Set `--inter` to generate datasets from MITDB with special splits.
 
 The following table provides the generated datasets used in the paper:
 
@@ -163,6 +163,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
     --data_path ${data_path} \
     --output_dir ${output_dir} \
     --log_dir ${log_dir} \
+    --model_ema
 ```
 
 - Here the effective batch size is 256 (`batch_size` per gpu) _ 1 (nodes) _ 2 (gpus per node) \* 4 (`accum_iter`) = 2048.
@@ -214,6 +215,8 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --test_path ${test_path} \
     --output_dir ${output_dir} \
     --log_dir ${log_dir} \
+    --linear \
+    --model_ema \
     --save_best
 ```
 
@@ -236,6 +239,8 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --mixup 0.5 \
     --output_dir ${output_dir} \
     --log_dir ${log_dir} \
+    --linear \
+    --model_ema \
     --save_best
 ```
 
