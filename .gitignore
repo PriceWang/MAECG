@@ -3,8 +3,8 @@
 
 /pretrains
 /finetunes
-/superviseds
 /test*/
 
+/*.out
 /*.sh
 /test*.*
