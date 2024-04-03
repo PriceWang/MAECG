@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-27 16:36:51
-FilePath: /maecg/main_pretrain.py
+LastEditTime: 2024-04-03 15:11:55
+FilePath: /15206140/MAECG/main_pretrain.py
 Description: Pretrain
 
 Copyright (c) 2023 by Guoxin Wang, All Rights Reserved. 
@@ -22,12 +22,11 @@ import numpy as np
 import timm.optim.optim_factory as optim_factory
 import torch
 import torch.backends.cudnn as cudnn
-from timm.utils import ModelEma
-from torch.utils.tensorboard import SummaryWriter
-
 import utils.misc as misc
 import vit_mae
 from engine_pretrain import train_one_epoch
+from timm.utils import ModelEma
+from torch.utils.tensorboard import SummaryWriter
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 
@@ -296,6 +295,11 @@ def main(args):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print("Training time {}".format(total_time_str))
+    if args.output_dir and misc.is_main_process():
+        with open(
+            os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps("Training time {}".format(total_time_str)) + "\n")
 
 
 if __name__ == "__main__":

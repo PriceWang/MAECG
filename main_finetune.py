@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-01 09:22:48
-FilePath: /maecg/main_finetune.py
+LastEditTime: 2024-04-03 15:12:09
+FilePath: /15206140/MAECG/main_finetune.py
 Description: Finetune
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -19,6 +19,10 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import utils.lr_decay as lrd
+import utils.misc as misc
+import vit_mae
+from engine_finetune import evaluate, train_one_epoch
 from timm.data.mixup import Mixup
 from timm.loss import SoftTargetCrossEntropy
 
@@ -26,11 +30,6 @@ from timm.loss import SoftTargetCrossEntropy
 from timm.models.layers import trunc_normal_
 from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
-
-import utils.lr_decay as lrd
-import utils.misc as misc
-import vit_mae
-from engine_finetune import evaluate, train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
@@ -503,6 +502,11 @@ def main(args):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print("Training time {}".format(total_time_str))
+    if args.output_dir and misc.is_main_process():
+        with open(
+            os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps("Training time {}".format(total_time_str)) + "\n")
 
 
 if __name__ == "__main__":
