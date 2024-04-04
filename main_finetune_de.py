@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-06 16:47:53
-FilePath: /maecg/main_finetune_de.py
+LastEditTime: 2024-04-04 08:50:20
+FilePath: /guoxin/maecg/main_finetune_de.py
 Description: Finetune with decoder
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -19,13 +19,12 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-from timm.utils import ModelEma
-from torch.utils.tensorboard import SummaryWriter
-
 import utils.lr_decay as lrd
 import utils.misc as misc
 import vit_mae
 from engine_finetune_de import train_one_epoch
+from timm.utils import ModelEma
+from torch.utils.tensorboard import SummaryWriter
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
@@ -109,14 +108,6 @@ def get_args_parser():
         "--warmup_epochs", type=int, default=40, metavar="N", help="epochs to warmup LR"
     )
 
-    # * Random Erase params
-    parser.add_argument(
-        "--norm_pix_loss",
-        action="store_true",
-        help="Use (per-patch) normalized pixels as targets for computing loss",
-    )
-    parser.set_defaults(norm_pix_loss=False)
-
     # * Finetuning params
     parser.add_argument(
         "--finetune",
@@ -126,9 +117,9 @@ def get_args_parser():
     parser.add_argument(
         "--linear",
         action="store_true",
+        default=False,
         help="linear probing",
     )
-    parser.set_defaults(linear=False)
     # parser.add_argument('--global_pool', action='store_true')
     # parser.set_defaults(global_pool=True)
     # parser.add_argument('--cls_token', action='store_false', dest='global_pool',
@@ -231,7 +222,7 @@ def main(args):
         drop_last=True,
     )
 
-    model = vit_mae.__dict__[args.model](norm_pix_loss=args.norm_pix_loss)
+    model = vit_mae.__dict__[args.model]()
 
     if args.finetune:
         checkpoint = torch.load(args.finetune, map_location="cpu")
@@ -263,7 +254,7 @@ def main(args):
         # trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
 
         if args.linear:
-            # freeze all but the head
+            # freeze all but the decoder
             for _, p in model.named_parameters():
                 p.requires_grad = False
         for _, p in model.decoder_embed.named_parameters():
@@ -373,6 +364,11 @@ def main(args):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print("Training time {}".format(total_time_str))
+    if args.output_dir and misc.is_main_process():
+        with open(
+            os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps("Training time {}".format(total_time_str)) + "\n")
 
 
 if __name__ == "__main__":

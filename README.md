@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-04 04:51:33
+ * @LastEditTime: 2024-04-04 10:07:10
  * @FilePath: /guoxin/maecg/README.md
  * @Description:
  *
@@ -150,14 +150,14 @@ The following table provides the generated datasets used in the paper:
 
 ### Pre-training
 
-To pre-train ViT-Base (recommended default) with multi-node distributed training, run the following on 1 nodes with 2 GPUs each:
+To pre-train ViT-Base (recommended default) with multi-node distributed training, run the following on 1 node with 2 GPUs each:
 
 ```
 OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
     --model mae_vit_base_patch32 \
-    --batch_size 256 \
-    --epochs 50 \
-    --accum_iter 4 \
+    --batch_size 1024 \
+    --epochs 200 \
+    --accum_iter 1 \
     --mask_ratio 0.5 \
     --lr 3e-4 \
     --data_path ${data_path} \
@@ -166,12 +166,12 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
     --model_ema
 ```
 
-- Here the effective batch size is 256 (`batch_size` per gpu) _ 1 (nodes) _ 2 (gpus per node) \* 4 (`accum_iter`) = 2048.
+- Here the effective batch size is 1024 (`batch_size` per gpu) \* 1 (nodes) \* 2 (gpus per node) \* 1 (`accum_iter`) = 2048.
 - To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
 - Set `mask_ratio` for mask ratio.
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
 - To speed up training, turn on automatic mixed precision (`torch.cuda.amp`). But there is a chance of producing NaN when pre-training ViT-Large/ViT-Huge in GPUs.
-- Training time is ~3h in 2 A100 GPUs (500 epochs).
+- Training time is ~11h in 2 A100 GPUs (200 epochs).
 
 The following table provides the pre-trained checkpoints used in the paper:
 
@@ -220,10 +220,10 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --save_best
 ```
 
-- Here the effective batch size is 1024 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 1024.
+- Here the effective batch size is 1024 (`batch_size` per gpu) \* 1 (node) \* 1 (gpus per node) = 1024.
 - Set `--train_path ${train_path_1} ${train_path_2} ...` to fine-tune with multiple datasets
 - See [MAE fine-tuning](https://github.com/facebookresearch/mae/blob/main/FINETUNE.md) for detailed parameter setting.
-- Training time is ~53m in 1 RTX3090 GPU.
+- Training time is ~57m in 1 RTX3090 GPU.
 
 Script for human identification:
 
@@ -244,7 +244,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --save_best
 ```
 
-- Here the effective batch size is 32 (`batch_size` per gpu) _ 1 (node) _ 1 (gpus per node) = 32.
+- Here the effective batch size is 32 (`batch_size` per gpu) \* 1 (node) \* 1 (gpus per node) = 32.
 - Training time is ~10m in 1 RTX3090 GPU.
 
 Script for denoising:
@@ -258,7 +258,9 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune_de.py \
     --finetune ${pretrain_ckpt} \
     --train_path ${train_path}\
     --output_dir ${output_dir} \
-    --log_dir ${log_dir}
+    --log_dir ${log_dir} \
+    --linear \
+    --model_ema
 ```
 
 - Training time is ~23m in 1 RTX3090 GPU.
@@ -427,7 +429,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 
 ### Visualization demo
 
-Run our interactive visualization demo and plot figures with [Colab notebook](https://colab.research.google.com/github/PriceWang/MAECG/blob/main/Visualize.ipynb):
+Run our interactive visualization demo with [Colab notebook](https://colab.research.google.com/github/PriceWang/MAECG/blob/main/Visualize.ipynb):
 
 <p align="center">
   <img src="https://private-user-images.githubusercontent.com/30796250/297465444-3eed2ccc-e97c-46a7-b656-1df7037e18fe.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU1MTI5MTQsIm5iZiI6MTcwNTUxMjYxNCwicGF0aCI6Ii8zMDc5NjI1MC8yOTc0NjU0NDQtM2VlZDJjY2MtZTk3Yy00NmE3LWI2NTYtMWRmNzAzN2UxOGZlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE3VDE3MzAxNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ2NjQwMTlhOTllNzFlMzc3ZGUwYWQ4Yzc4N2ExZTcyZWQ0M2I0MGIzYzA4NjdiZTIwYmRhMmE0NjI5MmUzN2QmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.gKN6jho9z8n9M9FDpFFtAAxybtkgfoePbFE9xOqQm0Q" width="1080">
