@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-04 10:07:10
+ * @LastEditTime: 2024-04-05 08:21:07
  * @FilePath: /guoxin/maecg/README.md
  * @Description:
  *
@@ -15,7 +15,7 @@
   <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="1080">
 </p>
 
-This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
+This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa) (Extended Version):
 
 ```
 aaaa
@@ -81,24 +81,27 @@ python dataprocess.py \
 - Set `--num_class 2` or `--num_class 4` for different classifications.
 - Set `--inter` to generate datasets from MITDB with special splits.
 
-The following table provides the generated datasets used in the paper:
+The following table provides the generated datasets used:
 
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th style="text-align:center"></th>
 <th style="text-align:center">CINC2021</th>
+<th style="text-align:center">PTB-XL</th>
 <th style="text-align:center">MITDB</th>
 <th style="text-align:center">INCARTDB</th>
 <th style="text-align:center">ECGIDDB</th>
 <!-- TABLE BODY -->
 <tr><td align="left">Unlabelled</td>
 <td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/CINC2021_ul.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/PTBXL_ul.pth">Download</a></td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Arrhythmia Classification (Train)</td>
+<td align="center">X</td>
 <td align="center">X</td>
 <td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_train.pth">Download</a></td>
 <td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_train.pth">Download</a></td>
@@ -106,17 +109,20 @@ The following table provides the generated datasets used in the paper:
 </tr>
 <tr><td align="left">Arrhythmia Classification (Valid)</td>
 <td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_valid.pth">Download</a></td>
 <td align="center">X</td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_valid.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_valid.pth">Download</a></td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Arrhythmia Classification (Test)</td>
 <td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_test.pth">Download</a></td>
 <td align="center">X</td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_test.pth">Download</a></td>
+<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_test.pth">Download</a></td>
 <td align="center">X</td>
 </tr>
 <tr><td align="left">Human Identification (Train)</td>
+<td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
@@ -126,9 +132,11 @@ The following table provides the generated datasets used in the paper:
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
+<td align="center">X</td>
 <td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_valid.pth">Download</a></td>
 </tr>
 <tr><td align="left">Human Identification (Test)</td>
+<td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
@@ -138,9 +146,11 @@ The following table provides the generated datasets used in the paper:
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
+<td align="center">X</td>
 <td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_dn_train.pth">Download</a></td>
 </tr>
 <tr><td align="left">Denoising (Test)</td>
+<td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
 <td align="center">X</td>
@@ -169,11 +179,12 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
 - Here the effective batch size is 1024 (`batch_size` per gpu) \* 1 (nodes) \* 2 (gpus per node) \* 1 (`accum_iter`) = 2048.
 - To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
 - Set `mask_ratio` for mask ratio.
+- Set `--data_path ${data_path_1} ${data_path_2} ...` to pre-train with multiple datasets
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
 - To speed up training, turn on automatic mixed precision (`torch.cuda.amp`). But there is a chance of producing NaN when pre-training ViT-Large/ViT-Huge in GPUs.
 - Training time is ~11h in 2 A100 GPUs (200 epochs).
 
-The following table provides the pre-trained checkpoints used in the paper:
+The following table provides the pre-trained checkpoints:
 
 <table><tbody>
 <!-- START TABLE -->
@@ -320,7 +331,7 @@ This should give:
 
 ### Results
 
-By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in the paper):
+By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia classification) in these tasks:
 
 <table><tbody>
 <!-- START TABLE -->
@@ -429,7 +440,7 @@ By fine-tuning these pre-trained models, we rank #1 in these tasks (detailed in 
 
 ### Visualization demo
 
-Run our interactive visualization demo with [Colab notebook](https://colab.research.google.com/github/PriceWang/MAECG/blob/main/Visualize.ipynb):
+Run our interactive visualization demo with [Colab notebook](https://colab.research.google.com/github/PriceWang/MAECG/blob/main/demo.ipynb):
 
 <p align="center">
   <img src="https://private-user-images.githubusercontent.com/30796250/297465444-3eed2ccc-e97c-46a7-b656-1df7037e18fe.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU1MTI5MTQsIm5iZiI6MTcwNTUxMjYxNCwicGF0aCI6Ii8zMDc5NjI1MC8yOTc0NjU0NDQtM2VlZDJjY2MtZTk3Yy00NmE3LWI2NTYtMWRmNzAzN2UxOGZlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE3VDE3MzAxNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ2NjQwMTlhOTllNzFlMzc3ZGUwYWQ4Yzc4N2ExZTcyZWQ0M2I0MGIzYzA4NjdiZTIwYmRhMmE0NjI5MmUzN2QmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.gKN6jho9z8n9M9FDpFFtAAxybtkgfoePbFE9xOqQm0Q" width="1080">
