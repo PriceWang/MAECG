@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-03 15:12:09
-FilePath: /15206140/MAECG/main_finetune.py
+LastEditTime: 2024-04-08 09:14:54
+FilePath: /guoxin/maecg/main_finetune.py
 Description: Finetune
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -176,7 +176,8 @@ def get_args_parser():
     )
     parser.add_argument(
         "--test_path",
-        default="..",
+        default=[".."],
+        nargs="+",
         type=str,
         help="testing set path",
     )
@@ -250,13 +251,14 @@ def main(args):
     cudnn.benchmark = True
 
     if args.eval:
-        args.train_path = [args.test_path]
+        args.train_path = args.test_path
     dataset_train = [torch.load(dataset) for dataset in args.train_path]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
-    dataset_val = torch.load(args.test_path)
+    dataset_val = [torch.load(dataset) for dataset in args.test_path]
+    dataset_val = torch.utils.data.ConcatDataset(dataset_val)
 
-    args.num_class = dataset_val.num_class
+    args.num_class = dataset_val.datasets[0].num_class
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
