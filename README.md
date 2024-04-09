@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-08 10:27:22
+ * @LastEditTime: 2024-04-09 06:29:47
  * @FilePath: /guoxin/maecg/README.md
  * @Description:
  *
@@ -434,40 +434,36 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <th style="text-align:center">0.6</th>
 <th style="text-align:center">0.7</th>
 <th style="text-align:center">0.8</th>
-<th style="text-align:center">0.9</th>
 <!-- TABLE BODY -->
 <tr><td align="left">MITDB-DS2 Acc</td>
-<td align="center">92.6</td>
-<td align="center">93.4</td>
-<td align="center">95.3</td>
-<td align="center">95.4</td>
-<td align="center"><b>95.6</b></td>
-<td align="center">95.3</td>
-<td align="center">95.3</td>
 <td align="center">95.2</td>
-<td align="center">90.3</td>
+<td align="center">95.2</td>
+<td align="center">95.4</td>
+<td align="center"><b>95.5</b></td>
+<td align="center">95.4</td>
+<td align="center">95.4</td>
+<td align="center">95.3</td>
+<td align="center">94.5</td>
 </tr>
 <tr><td align="left">MITDB-DS2 F1</td>
-<td align="center">92.6</td>
-<td align="center">93.4</td>
-<td align="center">95.3</td>
-<td align="center">95.4</td>
-<td align="center"><b>95.6</b></td>
-<td align="center">95.3</td>
-<td align="center">95.3</td>
-<td align="center">95.2</td>
-<td align="center">90.3</td>
+<td align="center">86.1</td>
+<td align="center">87.4</td>
+<td align="center">89.2</td>
+<td align="center"><b>90.0</b></td>
+<td align="center">89.7</td>
+<td align="center">89.2</td>
+<td align="center">89.0</td>
+<td align="center">87.0</td>
 </tr>
 <tr><td align="left">ECGIDDB Acc</td>
-<td align="center">69.4</td>
-<td align="center">73.4</td>
+<td align="center">95.9</td>
+<td align="center">96.9</td>
+<td align="center">96.9</td>
+<td align="center">96.9</td>
+<td align="center"><b>97.9</b></td>
 <td align="center">97.9</td>
-<td align="center">98.5</td>
-<td align="center"><b>98.8</b></td>
-<td align="center">98.7</td>
-<td align="center">98.0</td>
-<td align="center">96.5</td>
-<td align="center">38.5</td>
+<td align="center">97.2</td>
+<td align="center">96.3</td>
 </tr>
 </tbody></table>
 

@@ -111,7 +111,7 @@ class PatchEmbed1D(nn.Module):
 
     def __init__(
         self,
-        signal_length: int = 480,
+        signal_length: int = 1440,
         patch_size: int = 4,
         in_chans: int = 1,
         embed_dim: int = 768,
@@ -146,7 +146,7 @@ class ViT1D(nn.Module):
     def __init__(
         self,
         mlp_sizes=[128, 128, 1],
-        signal_length: int = 480,
+        signal_length: int = 1440,
         patch_size: int = 4,
         in_chans: int = 1,
         embed_dim: int = 1024,
@@ -265,7 +265,7 @@ class MaskedAutoencoderViT1D(ViT1D):
         norm_pix_loss: bool = False,
         embed_dim: int = 1024,
         mlp_ratio: int = 4.0,
-        signal_length: int = 480,
+        signal_length: int = 1440,
         norm_layer: nn.Module = nn.LayerNorm,
         **kwargs,
     ):
