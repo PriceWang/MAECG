@@ -48,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--width",
-    default=360,
+    default=512,
     type=int,
     help="half width",
 )
