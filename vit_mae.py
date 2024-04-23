@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-08-17 11:06:06
 LastEditors: Guoxin Wang
-LastEditTime: 2024-01-23 14:32:52
-FilePath: /mae/vit_mae.py
+LastEditTime: 2024-04-23 08:38:23
+FilePath: /maecg/vit_mae.py
 Description: Models
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -111,7 +111,7 @@ class PatchEmbed1D(nn.Module):
 
     def __init__(
         self,
-        signal_length: int = 1440,
+        signal_length: int = 720,
         patch_size: int = 4,
         in_chans: int = 1,
         embed_dim: int = 768,
@@ -146,7 +146,7 @@ class ViT1D(nn.Module):
     def __init__(
         self,
         mlp_sizes=[128, 128, 1],
-        signal_length: int = 1440,
+        signal_length: int = 720,
         patch_size: int = 4,
         in_chans: int = 1,
         embed_dim: int = 1024,
@@ -265,7 +265,7 @@ class MaskedAutoencoderViT1D(ViT1D):
         norm_pix_loss: bool = False,
         embed_dim: int = 1024,
         mlp_ratio: int = 4.0,
-        signal_length: int = 1440,
+        signal_length: int = 720,
         norm_layer: nn.Module = nn.LayerNorm,
         **kwargs,
     ):

@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-27 17:59:47
+LastEditTime: 2024-04-23 08:34:42
 FilePath: /maecg/dataprocess.py
 Description: 
 
@@ -48,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--width",
-    default=240,
+    default=360,
     type=int,
     help="half width",
 )
@@ -110,7 +110,6 @@ def af_beat() -> None:
     # Uses DS1 DS2 as training set and testing set for MITDB
     if args.inter:
         DS1 = [
-            101,
             101,
             106,
             108,

@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-27 17:59:13
+LastEditTime: 2024-04-23 08:58:36
 FilePath: /maecg/utils/data_utils.py
 Description: 
 
@@ -514,7 +514,6 @@ class ECG_Beat_DN(Dataset):
                     p_signal_wn = processing.resample_sig(
                         p_signal_wn, record_wn.__dict__["fs"], 360
                     )[0]
-                    # p_signal_wn = nk.ecg_clean(p_signal_wn, sampling_rate=360)
                     _, rpeaks = nk.ecg_peaks(p_signal_won, sampling_rate=360)
                     for i in range(len(rpeaks["ECG_R_Peaks"])):
                         if (
