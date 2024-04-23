@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-08-17 11:06:06
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-23 09:36:40
+LastEditTime: 2024-04-23 09:44:21
 FilePath: /maecg/vit_mae.py
 Description: Models
 
@@ -29,6 +29,8 @@ __all__ = [
     "mae_vit_small_patch32",
     "mae_vit_base_patch16",
     "mae_vit_base_patch32",
+    "mae_vit_base_patch64",
+    "mae_vit_base_patch128",
     "mae_vit_large_patch16",
     "mae_vit_large_patch32",
     "mae_vit_huge_patch16",
@@ -41,6 +43,8 @@ __all__ = [
     "vit_small_p32",
     "vit_base_p16",
     "vit_base_p32",
+    "vit_base_p64",
+    "vit_base_p128",
     "vit_large_p16",
     "vit_large_p32",
     "vit_huge_p16",
@@ -536,6 +540,38 @@ def mae_vit_base_patch32_dec512d8b(**kwargs):
     )
     return model
 
+    
+def mae_vit_base_patch64_dec512d8b(**kwargs):
+    model = MaskedAutoencoderViT1D(
+        patch_size=64,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        decoder_embed_dim=512,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        mlp_ratio=4,
+        norm_layer=partial(nn.LayerNorm, eps=1e-6),
+        **kwargs,
+    )
+    return model
+
+
+def mae_vit_base_patch128_dec512d8b(**kwargs):
+    model = MaskedAutoencoderViT1D(
+        patch_size=128,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        decoder_embed_dim=512,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        mlp_ratio=4,
+        norm_layer=partial(nn.LayerNorm, eps=1e-6),
+        **kwargs,
+    )
+    return model
+
 
 def mae_vit_large_patch16_dec512d8b(**kwargs):
     model = MaskedAutoencoderViT1D(
@@ -705,6 +741,32 @@ def vit_base_patch32(**kwargs):
     return model
 
 
+def vit_base_patch64(**kwargs):
+    model = ViT1D(
+        patch_size=64,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        mlp_ratio=4,
+        norm_layer=partial(nn.LayerNorm, eps=1e-6),
+        **kwargs,
+    )
+    return model
+
+
+def vit_base_patch128(**kwargs):
+    model = ViT1D(
+        patch_size=128,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        mlp_ratio=4,
+        norm_layer=partial(nn.LayerNorm, eps=1e-6),
+        **kwargs,
+    )
+    return model
+
+
 def vit_large_patch16(**kwargs):
     model = ViT1D(
         patch_size=16,
@@ -766,6 +828,8 @@ mae_vit_small_patch16 = mae_vit_small_patch16_dec256d8b  # decoder: 256 dim, 8 b
 mae_vit_small_patch32 = mae_vit_small_patch32_dec256d8b  # decoder: 256 dim, 8 blocks
 mae_vit_base_patch16 = mae_vit_base_patch16_dec512d8b  # decoder: 512 dim, 8 blocks
 mae_vit_base_patch32 = mae_vit_base_patch32_dec512d8b  # decoder: 512 dim, 8 blocks
+mae_vit_base_patch64 = mae_vit_base_patch64_dec512d8b  # decoder: 512 dim, 8 blocks
+mae_vit_base_patch128 = mae_vit_base_patch128_dec512d8b  # decoder: 512 dim, 8 blocks
 mae_vit_large_patch16 = mae_vit_large_patch16_dec512d8b  # decoder: 512 dim, 8 blocks
 mae_vit_large_patch32 = mae_vit_large_patch32_dec512d8b  # decoder: 512 dim, 8 blocks
 mae_vit_huge_patch16 = mae_vit_huge_patch16_dec512d8b  # decoder: 512 dim, 8 blocks
@@ -779,6 +843,8 @@ vit_small_p16 = vit_small_patch16
 vit_small_p32 = vit_small_patch32
 vit_base_p16 = vit_base_patch16
 vit_base_p32 = vit_base_patch32
+vit_base_p64 = vit_base_patch64
+vit_base_p128 = vit_base_patch128
 vit_large_p16 = vit_large_patch16
 vit_large_p32 = vit_large_patch32
 vit_huge_p16 = vit_huge_patch16
