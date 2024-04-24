@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-24 08:14:34
+ * @LastEditTime: 2024-04-24 08:47:16
  * @FilePath: /maecg/README.md
  * @Description:
  *
@@ -69,14 +69,14 @@ python dataprocess.py \
     --output_dir ${output_dir} \
     --width 240 \
     --channel_names ${channel_names} \
-    --num_class 4 \
+    --num_class 5 \
     --expansion 1
 ```
 
 - Choose `task` from "af_beat", "au_beat" and "dn_beat".
 - Set `--prefix ${prefix}` when original data path is nested.
 - Set `--channel_names_wn ${channel_names_wn}` for denoising/decoding.
-- Set `--num_class 2` or `--num_class 5` for different classifications.
+- Set `--num_class 2` or `--num_class 4` for different classifications.
 - Set `--inter` to generate datasets from MITDB with special splits.
 
 ### Pre-training
