@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-09 06:29:47
- * @FilePath: /guoxin/maecg/README.md
+ * @LastEditTime: 2024-04-24 08:14:34
+ * @FilePath: /maecg/README.md
  * @Description:
  *
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
@@ -15,7 +15,7 @@
   <img src="https://private-user-images.githubusercontent.com/30796250/297114254-c9670aed-40c2-43cc-9209-1924f5b6e7de.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDU0MjExNjAsIm5iZiI6MTcwNTQyMDg2MCwicGF0aCI6Ii8zMDc5NjI1MC8yOTcxMTQyNTQtYzk2NzBhZWQtNDBjMi00M2NjLTkyMDktMTkyNGY1YjZlN2RlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMTYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTE2VDE2MDEwMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAwMTk0NTM1YTFlMjU5YzRjNGU2NjNkNmRmNjU2MWExNzFjYzI5ZDg5OGJjMjIzMmY2N2ExMTczMTNlMGY2MzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.UloGr1lO4rf2ZUJQBdpYyj2Qj4oYKO-TENHXTuV5cXQ" width="1080">
 </p>
 
-This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa) (Extended Version):
+This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
 
 ```
 aaaa
@@ -26,9 +26,7 @@ This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](http
 ### Catalog
 
 - [x] Pre-training code
-- [x] Pre-trained checkpoints
 - [x] Fine-tuning code
-- [x] Fine-tuned checkpoints
 - [x] Visualization demo
 
 ### Requirement
@@ -81,83 +79,6 @@ python dataprocess.py \
 - Set `--num_class 2` or `--num_class 5` for different classifications.
 - Set `--inter` to generate datasets from MITDB with special splits.
 
-The following table provides the generated datasets used:
-
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th style="text-align:center"></th>
-<th style="text-align:center">CINC2021</th>
-<th style="text-align:center">PTB-XL</th>
-<th style="text-align:center">MITDB</th>
-<th style="text-align:center">INCARTDB</th>
-<th style="text-align:center">ECGIDDB</th>
-<!-- TABLE BODY -->
-<tr><td align="left">Unlabelled</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/CINC2021_ul.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/PTBXL_ul.pth">Download</a></td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-</tr>
-<tr><td align="left">Arrhythmia Classification (Train)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_train.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_train.pth">Download</a></td>
-<td align="center">X</td>
-</tr>
-<tr><td align="left">Arrhythmia Classification (Valid)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_valid.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_valid.pth">Download</a></td>
-<td align="center">X</td>
-</tr>
-<tr><td align="left">Arrhythmia Classification (Test)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/MITDB_af_test.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/INCARTDB_af_test.pth">Download</a></td>
-<td align="center">X</td>
-</tr>
-<tr><td align="left">Human Identification (Train)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_train.pth">Download</a></td>
-</tr>
-<tr><td align="left">Human Identification (Valid)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_valid.pth">Download</a></td>
-</tr>
-<tr><td align="left">Human Identification (Test)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_au_test.pth">Download</a></td>
-</tr>
-<tr><td align="left">Denoising (Train)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_dn_train.pth">Download</a></td>
-</tr>
-<tr><td align="left">Denoising (Test)</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"><a href="https://huggingface.co/datasets/PriceWang/MAECG/resolve/main/ECGIDDB_dn_test.pth">Download</a></td>
-</tr>
-</tbody></table>
-
 ### Pre-training
 
 To pre-train ViT-Base (recommended default) with multi-node distributed training, run the following on 1 node with 2 GPUs each:
@@ -183,29 +104,6 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
 - To speed up training, turn on automatic mixed precision (`torch.cuda.amp`). But there is a chance of producing NaN when pre-training ViT-Large/ViT-Huge in GPUs.
 - Training time is ~11h in 2 A100 GPUs (200 epochs).
-
-The following table provides the pre-trained checkpoints:
-
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th style="text-align:center"></th>
-<th style="text-align:center">ViT-Atto</th>
-<th style="text-align:center">ViT-Tiny</th>
-<th style="text-align:center">ViT-Small</th>
-<th style="text-align:center">ViT-Base</th>
-<th style="text-align:center">ViT-Large</th>
-<th style="text-align:center">ViT-Huge</th>
-<!-- TABLE BODY -->
-<tr><td align="left">Pre-trained Checkpoint</td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Atto.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Tiny.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Small.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Large.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Huge.pth">Download</a></td>
-</tr>
-</tbody></table>
 
 ### Fine-tuning with pre-trained checkpoints
 
@@ -278,28 +176,6 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune_de.py \
 
 #### Evaluation
 
-As a sanity check, run evaluation using our fine-tuned models:
-
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th style="text-align:center"></th>
-<th style="text-align:center">Arrhythmia Classification</th>
-<th style="text-align:center">Human Identification</th>
-<th style="text-align:center">Denoise</th>
-<!-- TABLE BODY -->
-<tr><td align="left">Fine-tuned Checkpoint</td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base-AF.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base-ID.pth">Download</a></td>
-<td align="center"><a href="https://huggingface.co/PriceWang/MAECG/resolve/main/ViT-Base-DN.pth">Download</a></td>
-</tr>
-<tr><td align="left">Reference Accuracy</td>
-<td align="center">99.413</td>
-<td align="center">99.500</td>
-<td align="center">X</td>
-</tr>
-</tbody></table>
-
 Evaluate arrhythmia classification on MITDB-DS1 (train + valid) and INCARTDB in a single GPU:
 
 ```
@@ -312,12 +188,6 @@ python main_finetune.py \
     --eval
 ```
 
-This should give:
-
-```
-* Acc@1 99.413 Acc@3 99.987 loss 0.101
-```
-
 Evaluate human identification on ECGIDDB (train + valid):
 
 ```
@@ -327,12 +197,6 @@ python main_finetune.py \
     --test_path ${ECGIDDB_train_path} \
     ${ECGIDDB_valid_path} \
     --eval
-```
-
-This should give:
-
-```
-* Acc@1 99.500 Acc@3 99.850 loss 0.220
 ```
 
 ### Results
@@ -353,32 +217,23 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <th style="text-align:center">ViT-Large</th>
 <th style="text-align:center">ViT-Huge</th>
 <!-- TABLE BODY -->
-<tr><td align="left">MITDB-DS2 Acc</td>
-<td align="center">94.0</td>
-<td align="center">95.2</td>
-<td align="center">95.3</td>
+<tr><td align="left">MITDB-DS2</td>
+<td align="center">93.3</td>
+<td align="center">93.4</td>
+<td align="center">94.8</td>
+<td align="center"><b>95.6</b></td>
 <td align="center">95.4</td>
-<td align="center">95.5</td>
-<td align="center">-</td>
+<td align="center">95.4</td>
 </tr>
-<tr><td align="left">MITDB-DS2 F1</td>
-<td align="center">55.1</td>
-<td align="center">75.3</td>
-<td align="center">87.2</td>
-<td align="center">89.7</td>
-<td align="center">90.9</td>
-<td align="center">-</td>
-</tr>
-<tr><td align="left">ECGIDDB Acc</td>
-<td align="center">93.8</td>
-<td align="center">96.2</td>
-<td align="center">97.0</td>
-<td align="center">97.9</td>
-<td align="center">97.5</td>
-<td align="center">-</td>
+<tr><td align="left">ECGIDDB</td>
+<td align="center">94.1</td>
+<td align="center">97.1</td>
+<td align="center">98.7</td>
+<td align="center"><b>98.8</b></td>
+<td align="center">98.5</td>
+<td align="center">98.3</td>
 </tr>
 </tbody></table>
-
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
@@ -393,7 +248,7 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <th style="text-align:center">32</th>
 <th style="text-align:center">96</th>
 <!-- TABLE BODY -->
-<tr><td align="left">MITDB-DS2 Acc</td>
+<tr><td align="left">MITDB-DS2</td>
 <td align="center">93.8</td>
 <td align="center">94.5</td>
 <td align="center">94.7</td>
@@ -401,15 +256,7 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <td align="center"><b>95.6</b></td>
 <td align="center">94.1</td>
 </tr>
-<tr><td align="left">MITDB-DS2 F1</td>
-<td align="center">93.8</td>
-<td align="center">94.5</td>
-<td align="center">94.7</td>
-<td align="center">95.1</td>
-<td align="center"><b>95.6</b></td>
-<td align="center">94.1</td>
-</tr>
-<tr><td align="left">ECGIDDB Acc</td>
+<tr><td align="left">ECGIDDB</td>
 <td align="center">88.7</td>
 <td align="center">92.6</td>
 <td align="center">95.5</td>
@@ -418,7 +265,6 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <td align="center">95.7</td>
 </tr>
 </tbody></table>
-
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
@@ -434,36 +280,29 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 <th style="text-align:center">0.6</th>
 <th style="text-align:center">0.7</th>
 <th style="text-align:center">0.8</th>
+<th style="text-align:center">0.9</th>
 <!-- TABLE BODY -->
-<tr><td align="left">MITDB-DS2 Acc</td>
-<td align="center">95.2</td>
-<td align="center">95.2</td>
-<td align="center">95.4</td>
-<td align="center"><b>95.5</b></td>
-<td align="center">95.4</td>
-<td align="center">95.4</td>
+<tr><td align="left">MITDB-DS2</td>
+<td align="center">92.6</td>
+<td align="center">93.4</td>
 <td align="center">95.3</td>
-<td align="center">94.5</td>
+<td align="center">95.4</td>
+<td align="center"><b>95.6</b></td>
+<td align="center">95.3</td>
+<td align="center">95.3</td>
+<td align="center">95.2</td>
+<td align="center">90.3</td>
 </tr>
-<tr><td align="left">MITDB-DS2 F1</td>
-<td align="center">86.1</td>
-<td align="center">87.4</td>
-<td align="center">89.2</td>
-<td align="center"><b>90.0</b></td>
-<td align="center">89.7</td>
-<td align="center">89.2</td>
-<td align="center">89.0</td>
-<td align="center">87.0</td>
-</tr>
-<tr><td align="left">ECGIDDB Acc</td>
-<td align="center">95.9</td>
-<td align="center">96.9</td>
-<td align="center">96.9</td>
-<td align="center">96.9</td>
-<td align="center"><b>97.9</b></td>
+<tr><td align="left">ECGIDDB</td>
+<td align="center">69.4</td>
+<td align="center">73.4</td>
 <td align="center">97.9</td>
-<td align="center">97.2</td>
-<td align="center">96.3</td>
+<td align="center">98.5</td>
+<td align="center"><b>98.8</b></td>
+<td align="center">98.7</td>
+<td align="center">98.0</td>
+<td align="center">96.5</td>
+<td align="center">38.5</td>
 </tr>
 </tbody></table>
 
