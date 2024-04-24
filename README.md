@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-24 09:21:09
+ * @LastEditTime: 2024-04-24 09:53:14
  * @FilePath: /maecg/README.md
  * @Description:
  *
@@ -12,7 +12,7 @@
 ## MAECG: A PyTorch Implementation
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/30796250/325136834-0ec84e09-c304-4e37-b578-c29d15f16678.png" width="1080">
+  <img src="https://github.com/PriceWang/MAECG/assets/30796250/48680d87-065e-4708-bb3b-3b1dc1835868" width="1080">
 </p>
 
 This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
@@ -311,7 +311,7 @@ By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia c
 Run our interactive visualization demo with [Colab notebook](https://colab.research.google.com/github/PriceWang/MAECG/blob/main/demo.ipynb):
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/30796250/325137817-a8c13f5c-e7ef-4489-8759-eb673e703a6b.png" width="1080">
+  <img src="https://github.com/PriceWang/MAECG/assets/30796250/f42fbe96-5fed-47d7-a75e-8dd8fa73b571" width="1080">
 </p>
 
 ### License
