@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-23 08:34:42
+LastEditTime: 2024-04-24 08:25:57
 FilePath: /maecg/dataprocess.py
 Description: 
 
@@ -48,7 +48,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--width",
-    default=512,
+    default=480,
     type=int,
     help="half width",
 )
