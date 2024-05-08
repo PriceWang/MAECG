@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-04-24 08:14:34
+ * @LastEditTime: 2024-05-08 04:11:22
  * @FilePath: /maecg/README.md
  * @Description:
  *
@@ -201,7 +201,7 @@ python main_finetune.py \
 
 ### Results
 
-By fine-tuning these pre-trained models, we rank #1 Acc (and F1 for arrhythmia classification) in these tasks:
+By fine-tuning these pre-trained models, we rank #1 Acc in these tasks:
 
 <table><tbody>
 <!-- START TABLE -->
