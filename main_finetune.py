@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-08 09:14:54
-FilePath: /guoxin/maecg/main_finetune.py
+LastEditTime: 2024-05-14 09:02:54
+FilePath: /maecg/main_finetune.py
 Description: Finetune
 
 Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
@@ -19,10 +19,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-import utils.lr_decay as lrd
-import utils.misc as misc
-import vit_mae
-from engine_finetune import evaluate, train_one_epoch
+from imblearn.over_sampling import SMOTE
 from timm.data.mixup import Mixup
 from timm.loss import SoftTargetCrossEntropy
 
@@ -30,6 +27,11 @@ from timm.loss import SoftTargetCrossEntropy
 from timm.models.layers import trunc_normal_
 from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
+
+import utils.lr_decay as lrd
+import utils.misc as misc
+import vit_mae
+from engine_finetune import evaluate, train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
@@ -114,6 +116,12 @@ def get_args_parser():
     # Augmentation parameters
     parser.add_argument(
         "--smoothing", type=float, default=0.1, help="Label smoothing (default: 0.1)"
+    )
+    parser.add_argument(
+        "--smote",
+        action="store_true",
+        default=False,
+        help="enable smote augmentation",
     )
 
     # * Mixup params
@@ -253,6 +261,17 @@ def main(args):
     if args.eval:
         args.train_path = args.test_path
     dataset_train = [torch.load(dataset) for dataset in args.train_path]
+
+    # smote
+    if args.smote:
+        smo = SMOTE(random_state=seed)
+        for dataset_single in dataset_train:
+            signals, labels = smo.fit_resample(
+                dataset_single.signals.numpy(), dataset_single.labels.numpy()
+            )
+            dataset_single.signals = torch.tensor(signals, dtype=torch.float)
+            dataset_single.labels = torch.tensor(labels, dtype=torch.long)
+
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
     dataset_val = [torch.load(dataset) for dataset in args.test_path]
