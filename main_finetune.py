@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-05-15 07:40:56
+LastEditTime: 2024-05-15 07:48:33
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -118,10 +118,11 @@ def get_args_parser():
         "--smoothing", type=float, default=0.1, help="Label smoothing (default: 0.1)"
     )
     parser.add_argument(
-        "--smote",
-        action="store_true",
-        default=False,
-        help="enable smote augmentation",
+        "--sample_aug",
+        type=str,
+        default="none",
+        choices=["SMOTE", "ADASYN", "BorderlineSMOTE", "none"],
+        help="enable sampling augmentation",
     )
 
     # * Mixup params
@@ -262,9 +263,14 @@ def main(args):
         args.train_path = args.test_path
     dataset_train = [torch.load(dataset) for dataset in args.train_path]
 
-    # smote
-    if args.smote:
-        smo = BorderlineSMOTE(random_state=seed)
+    # augmentation
+    if args.sample_aug != "none":
+        if args.sample_aug == "SMOTE":
+            smo = SMOTE(random_state=seed)
+        elif args.sample_aug == "ADASYN":
+            smo = ADASYN(random_state=seed)
+        else:
+            smo = BorderlineSMOTE(random_state=seed)
         for dataset_single in dataset_train:
             signals, labels = smo.fit_resample(
                 dataset_single.signals.numpy(), dataset_single.labels.numpy()
