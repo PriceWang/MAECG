@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-05-15 08:05:45
+LastEditTime: 2024-05-15 08:08:02
 FilePath: /maecg/engine_finetune.py
 Description: 
 
@@ -140,7 +140,7 @@ def evaluate(data_loader, model, device):
             output = model(samples)
             loss = criterion(output, target)
 
-        acc1 = accuracy(output, target)
+        acc1 = accuracy(output, target)[0]
         pred = torch.argmax(output, 1)
         score = f1_score(pred.cpu().numpy(), target.cpu().numpy(), average="macro")
 
