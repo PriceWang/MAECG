@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-05-14 09:02:54
+LastEditTime: 2024-05-15 07:40:56
 FilePath: /maecg/main_finetune.py
 Description: Finetune
 
@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from timm.data.mixup import Mixup
 from timm.loss import SoftTargetCrossEntropy
 
@@ -264,7 +264,7 @@ def main(args):
 
     # smote
     if args.smote:
-        smo = SMOTE(random_state=seed)
+        smo = BorderlineSMOTE(random_state=seed)
         for dataset_single in dataset_train:
             signals, labels = smo.fit_resample(
                 dataset_single.signals.numpy(), dataset_single.labels.numpy()
@@ -450,11 +450,14 @@ def main(args):
         print(
             f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
+        print(
+            f"F1-Score of the network on the {len(dataset_val)} test ECGs: {test_stats['f1']:.1f}%"
+        )
         exit(0)
 
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
-    max_accuracy = 0.0
+    f1 = 0.0
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
             data_loader_train.sampler.set_epoch(epoch)
@@ -477,13 +480,16 @@ def main(args):
         print(
             f"Accuracy of the network on the {len(dataset_val)} test ECGs: {test_stats['acc1']:.1f}%"
         )
-        max_accuracy = max(max_accuracy, test_stats["acc1"])
-        print(f"Max accuracy: {max_accuracy:.2f}%")
+        print(
+            f"F1-Score of the network on the {len(dataset_val)} test ECGs: {test_stats['f1']:.1f}%"
+        )
+        f1 = max(f1, test_stats["f1"])
+        print(f"Max f1-score: {f1:.2f}%")
 
         save_flag = False
         if args.output_dir and args.save_ckpt:
             if args.save_best:
-                if max_accuracy == test_stats["acc1"]:
+                if f1 == test_stats["f1"]:
                     save_flag = True
             else:
                 if (epoch + 1) % args.save_ckpt_freq == 0 or epoch + 1 == args.epochs:
@@ -502,7 +508,7 @@ def main(args):
 
         if log_writer is not None:
             log_writer.add_scalar("perf/test_acc1", test_stats["acc1"], epoch)
-            log_writer.add_scalar("perf/test_acc3", test_stats["acc3"], epoch)
+            log_writer.add_scalar("perf/test_f1", test_stats["f1"], epoch)
             log_writer.add_scalar("perf/test_loss", test_stats["loss"], epoch)
 
         log_stats = {

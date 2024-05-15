@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-06 16:52:49
+LastEditTime: 2024-05-15 07:38:26
 FilePath: /maecg/engine_finetune.py
 Description: 
 
@@ -14,6 +14,7 @@ import sys
 from typing import Iterable, Optional
 
 import torch
+from sklearn.metrics import f1_score
 from timm.data import Mixup
 from timm.utils import ModelEma, accuracy
 
@@ -139,17 +140,18 @@ def evaluate(data_loader, model, device):
             output = model(samples)
             loss = criterion(output, target)
 
-        acc1, acc3 = accuracy(output, target, topk=(1, 3))
+        acc1 = accuracy(output, target)
+        score = f1_score(output.cpu().numpy(), target.cpu().numpy(), average="macro")
 
         batch_size = samples.shape[0]
         metric_logger.update(loss=loss.item())
         metric_logger.meters["acc1"].update(acc1.item(), n=batch_size)
-        metric_logger.meters["acc3"].update(acc3.item(), n=batch_size)
+        metric_logger.meters["f1"].update(score, n=batch_size)
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     print(
-        "* Acc@1 {top1.global_avg:.3f} Acc@3 {top3.global_avg:.3f} loss {losses.global_avg:.3f}".format(
-            top1=metric_logger.acc1, top3=metric_logger.acc3, losses=metric_logger.loss
+        "* Acc@1 {top1.global_avg:.3f} F1-Score {f1.global_avg:.3f} loss {losses.global_avg:.3f}".format(
+            top1=metric_logger.acc1, f1=metric_logger.f1, losses=metric_logger.loss
         )
     )
 
