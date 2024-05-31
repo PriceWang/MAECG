@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-05-08 04:13:52
+ * @LastEditTime: 2024-05-31 07:06:23
  * @FilePath: /maecg/README.md
  * @Description:
  *
@@ -15,7 +15,7 @@
   <img src="https://github.com/PriceWang/MAECG/assets/30796250/48680d87-065e-4708-bb3b-3b1dc1835868" width="1080">
 </p>
 
-This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](aaa):
+This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](https://ieeexplore.ieee.org/document/10541906):
 
 ```
 aaaa
