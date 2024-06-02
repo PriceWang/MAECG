@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-05-31 07:06:23
- * @FilePath: /maecg/README.md
+ * @LastEditTime: 2024-06-02 06:28:22
+ * @FilePath: /guoxin/maecg/README.md
  * @Description:
  *
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
@@ -18,7 +18,13 @@
 This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](https://ieeexplore.ieee.org/document/10541906):
 
 ```
-aaaa
+@article{wang2024task,
+  title={A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG},
+  author={Wang, Guoxin and Wang, Qingyuan and Nag, Avishek and John, Deepu},
+  journal={IEEE Sensors Journal},
+  year={2024},
+  publisher={IEEE}
+}
 ```
 
 This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) and this repo is inspired by the [MAE repo](https://github.com/facebookresearch/mae).
