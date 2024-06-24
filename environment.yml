@@ -5,6 +5,7 @@ dependencies:
   - pip=23.0.1
   - python=3.10.9
   - pip:
+    - numpy==1.26.4
     - torch==2.0.0
     - torchvision==0.15.1
     - timm==0.4.12
