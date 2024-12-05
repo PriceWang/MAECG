@@ -126,7 +126,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --lr 3e-4 \
     --epochs 200 \
     --finetune ${pretrain_ckpt} \
-    --train_path ${train_path}\
+    --train_path ${train_path} \
     --test_path ${test_path} \
     --output_dir ${output_dir} \
     --log_dir ${log_dir} \
@@ -149,7 +149,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
     --lr 1e-3 \
     --epochs 200 \
     --finetune ${pretrain_ckpt} \
-    --train_path ${train_path}\
+    --train_path ${train_path} \
     --test_path ${test_path} \
     --mixup 0.5 \
     --output_dir ${output_dir} \
@@ -171,7 +171,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune_de.py \
     --lr 1e-3 \
     --epochs 200 \
     --finetune ${pretrain_ckpt} \
-    --train_path ${train_path}\
+    --train_path ${train_path} \
     --output_dir ${output_dir} \
     --log_dir ${log_dir} \
     --linear \
