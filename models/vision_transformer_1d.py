@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2025-05-20 13:08:01
 LastEditors: Guoxin Wang
-LastEditTime: 2025-05-21 15:56:01
+LastEditTime: 2025-05-21 17:03:39
 FilePath: /MAECG/models/vision_transformer_1d.py
 Description:
 
@@ -515,7 +515,7 @@ def vit_1d_huge(
         pretrained_cfg_overlay = {}
     model = VisionTransformer1D(
         embed_dim=1280,
-        depth=24,
+        depth=32,
         num_heads=16,
         **kwargs,
     )

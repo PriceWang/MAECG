@@ -240,3 +240,163 @@ def vit_mae_1d_atto(
             )
         load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
+
+
+@register_model
+def vit_mae_1d_tiny(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=192,
+        depth=12,
+        num_heads=3,
+        decoder_embed_dim=256,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
+
+
+@register_model
+def vit_mae_1d_small(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=384,
+        depth=12,
+        num_heads=6,
+        decoder_embed_dim=256,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
+
+
+@register_model
+def vit_mae_1d_base(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        decoder_embed_dim=512,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
+
+
+@register_model
+def vit_mae_1d_large(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=1024,
+        depth=24,
+        num_heads=16,
+        decoder_embed_dim=512,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
+
+
+@register_model
+def vit_mae_1d_huge(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=1280,
+        depth=32,
+        num_heads=16,
+        decoder_embed_dim=512,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
