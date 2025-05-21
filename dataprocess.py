@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2022-10-27 13:45:59
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-24 08:30:19
-FilePath: /maecg/dataprocess.py
-Description: 
+LastEditTime: 2025-05-21 16:09:21
+FilePath: /MAECG/dataprocess.py
+Description:
 
-Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2022 by Guoxin Wang, All Rights Reserved.
 """
 
 import argparse
@@ -65,8 +65,8 @@ parser.add_argument(
     help="list of channels to use (with noise)",
 )
 parser.add_argument(
-    "--num_class",
-    default=5,
+    "--num_classes",
+    default=4,
     type=int,
     help="number of classes",
 )
@@ -180,7 +180,7 @@ def af_beat() -> None:
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            num_class=args.num_class,
+            num_classes=args.num_classes,
         )
         train_size = int(0.9 * len(dataset))
         train_set = copy.deepcopy(dataset)
@@ -191,22 +191,22 @@ def af_beat() -> None:
         valid_set.labels = dataset.labels[train_size:]
         torch.save(
             train_set,
-            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_classes),
         )
         torch.save(
             valid_set,
-            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_classes),
         )
         test_set = ECG_Beat_AF(
             files=test_files,
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            num_class=args.num_class,
+            num_classes=args.num_classes,
         )
         torch.save(
             test_set,
-            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_classes),
         )
     else:
         files = np.array(
@@ -221,7 +221,7 @@ def af_beat() -> None:
             width=args.width,
             channel_names=args.channel_names,
             expansion=args.expansion,
-            num_class=args.num_class,
+            num_classes=args.num_classes,
         )
         train_size = int(0.6 * len(dataset))
         valid_size = int(0.2 * len(dataset))
@@ -236,15 +236,15 @@ def af_beat() -> None:
         test_set.labels = dataset.labels[train_size + valid_size :]
         torch.save(
             train_set,
-            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_train.pth".format(args.output_dir, args.task, args.num_classes),
         )
         torch.save(
             valid_set,
-            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_valid.pth".format(args.output_dir, args.task, args.num_classes),
         )
         torch.save(
             test_set,
-            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_class),
+            "{}/{}_{}_test.pth".format(args.output_dir, args.task, args.num_classes),
         )
 
 

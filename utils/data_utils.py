@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2022-04-29 14:54:52
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-24 08:27:58
-FilePath: /maecg/utils/data_utils.py
-Description: 
+LastEditTime: 2025-05-21 15:14:59
+FilePath: /MAECG/utils/data_utils.py
+Description:
 
-Copyright (c) 2022 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2022 by Guoxin Wang, All Rights Reserved.
 """
 
 import os
@@ -260,14 +260,14 @@ class ECG_Beat_AF(Dataset):
         channel_names: list,
         expansion: int,
         transform: object = None,
-        num_class: int = 5,
+        num_classes: int = 5,
     ) -> None:
         self.transform = transform
         self.expansion = expansion
-        self.num_class = num_class
-        if num_class == 5:
+        self.num_classes = num_classes
+        if num_classes == 5:
             self.LABEL = BEAT_LABEL_5
-        elif num_class == 4:
+        elif num_classes == 4:
             self.LABEL = BEAT_LABEL_4
         else:
             self.LABEL = BEAT_LABEL_2
@@ -350,7 +350,7 @@ class ECG_Beat_AU(Dataset):
     ) -> None:
         self.transform = transform
         self.expansion = expansion
-        self.num_class = len(folders)
+        self.num_classes = len(folders)
         self.signals = []
         self.labels = []
         pool = Pool()
@@ -442,7 +442,7 @@ class ECG_Beat_DN(Dataset):
     ) -> None:
         self.transform = transform
         self.expansion = expansion
-        self.num_class = len(folders)
+        self.num_classes = len(folders)
         self.signals_wn = []
         self.signals_won = []
         pool = Pool()

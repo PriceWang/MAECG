@@ -2,8 +2,8 @@
 Author: Guoxin Wang
 Date: 2025-05-20 13:08:01
 LastEditors: Guoxin Wang
-LastEditTime: 2025-05-21 13:26:34
-FilePath: /DMMECG/models/vision_transformer_1d.py
+LastEditTime: 2025-05-21 15:56:01
+FilePath: /MAECG/models/vision_transformer_1d.py
 Description:
 
 Copyright (c) 2025 by Guoxin Wang, All Rights Reserved.
@@ -11,12 +11,7 @@ Copyright (c) 2025 by Guoxin Wang, All Rights Reserved.
 
 import math
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
-
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
+from typing import Any, Callable, Dict, Optional, Type
 
 import torch
 import torch.nn as nn
@@ -33,6 +28,11 @@ from timm.layers import (
 from timm.layers.format import Format
 from timm.models import load_pretrained, named_apply, register_model
 from timm.models.vision_transformer import Block, get_init_weights_vit, global_pool_nlc
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 
 def ncl_to(x: torch.Tensor, fmt: Format):
@@ -357,7 +357,7 @@ class VisionTransformer1D(nn.Module):
 
 
 @register_model
-def vit1d_atto(
+def vit_1d_atto(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
@@ -386,7 +386,7 @@ def vit1d_atto(
 
 
 @register_model
-def vit1d_tiny(
+def vit_1d_tiny(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
@@ -415,7 +415,7 @@ def vit1d_tiny(
 
 
 @register_model
-def vit1d_small(
+def vit_1d_small(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
@@ -444,7 +444,7 @@ def vit1d_small(
 
 
 @register_model
-def vit1d_base(
+def vit_1d_base(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
@@ -473,7 +473,7 @@ def vit1d_base(
 
 
 @register_model
-def vit1d_large(
+def vit_1d_large(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
@@ -502,7 +502,7 @@ def vit1d_large(
 
 
 @register_model
-def vit1d_huge(
+def vit_1d_huge(
     pretrained: bool = False,
     pretrained_cfg: Optional[Dict[str, Any]] = None,
     pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,

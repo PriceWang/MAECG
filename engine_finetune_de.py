@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:04:28
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-06 16:54:58
-FilePath: /maecg/engine_finetune_de.py
-Description: 
+LastEditTime: 2025-05-21 16:20:37
+FilePath: /MAECG/engine_finetune_de.py
+Description:
 
-Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 """
 
 import math
@@ -78,7 +78,7 @@ def train_one_epoch(
         if len(targets.shape) == 2:
             targets = targets.unsqueeze(1)
 
-        with torch.cuda.amp.autocast():
+        with torch.amp.autocast(device.type):
             loss = loss_fn(model.module, samples, targets)
 
         loss_value = loss.item()

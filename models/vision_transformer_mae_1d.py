@@ -1,6 +1,18 @@
+from functools import partial
+from typing import Any, Dict, Optional, Type
+
 import torch
+import torch.nn as nn
+from timm.layers import LayerType, get_norm_layer
+from timm.models import load_pretrained, register_model
+from timm.models.vision_transformer import Block
 
 from .vision_transformer_1d import VisionTransformer1D
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 
 class VisionTransformerMAE1D(VisionTransformer1D):
@@ -8,90 +20,102 @@ class VisionTransformerMAE1D(VisionTransformer1D):
 
     def __init__(
         self,
-        patch_size: int = 4,
+        sig_length: int = 480,
+        patch_size: int = 32,
         in_chans: int = 1,
+        embed_dim: int = 96,
+        depth: int = 12,
+        num_heads: int = 2,
         decoder_embed_dim: int = 512,
         decoder_depth: int = 8,
         decoder_num_heads: int = 16,
-        norm_pix_loss: bool = False,
-        embed_dim: int = 1024,
         mlp_ratio: int = 4.0,
-        signal_length: int = 480,
-        norm_layer: nn.Module = nn.LayerNorm,
+        qkv_bias: bool = True,
+        weight_init: Literal["skip", "jax", "jax_nlhb", "moco", ""] = "",
+        fix_init: bool = False,
+        norm_layer: Optional[LayerType] = None,
+        block_fn: Type[nn.Module] = Block,
+        norm_pix_loss: bool = False,
         **kwargs,
     ):
         super().__init__(
+            sig_length=sig_length,
             patch_size=patch_size,
             in_chans=in_chans,
             embed_dim=embed_dim,
+            depth=depth,
+            num_heads=num_heads,
             mlp_ratio=mlp_ratio,
-            signal_length=signal_length,
-            norm_layer=norm_layer,
+            qkv_bias=qkv_bias,
+            block_fn=block_fn,
             **kwargs,
         )
+        self.norm_pix_loss = norm_pix_loss
+        norm_layer = get_norm_layer(norm_layer) or partial(nn.LayerNorm, eps=1e-6)
         num_patches = self.patch_embed.num_patches
+
         # --------------------------------------------------------------------------
         # MAE decoder specifics
         self.decoder_embed = nn.Linear(embed_dim, decoder_embed_dim, bias=True)
-
         self.mask_token = nn.Parameter(torch.zeros(1, 1, decoder_embed_dim))
-
         self.decoder_pos_embed = nn.Parameter(
-            torch.zeros(1, num_patches, decoder_embed_dim), requires_grad=False
-        )  # fixed sin-cos embedding
-
-        self.decoder_blocks = nn.ModuleList(
-            [
-                Block(
-                    decoder_embed_dim,
-                    decoder_num_heads,
-                    mlp_ratio,
-                    qkv_bias=True,
-                    norm_layer=norm_layer,
-                )
-                for i in range(decoder_depth)
-            ]
+            torch.randn(1, num_patches, decoder_embed_dim) * 0.02
         )
 
+        self.decoder_blocks = nn.Sequential(
+            *[
+                block_fn(
+                    dim=decoder_embed_dim,
+                    num_heads=decoder_num_heads,
+                    mlp_ratio=mlp_ratio,
+                    qkv_bias=qkv_bias,
+                    norm_layer=norm_layer,
+                )
+                for _ in range(decoder_depth)
+            ]
+        )
         self.decoder_norm = norm_layer(decoder_embed_dim)
+
         self.decoder_pred = nn.Linear(
             decoder_embed_dim, patch_size * in_chans, bias=True
         )  # decoder to patch
         # --------------------------------------------------------------------------
 
-        self.norm_pix_loss = norm_pix_loss
+        if weight_init != "skip":
+            self.init_weights(weight_init)
+        if fix_init:
+            self.fix_init_weight()
 
-        self.initialize_weights()
+    def patchify(self, sig: torch.Tensor):
+        """
+        x: (N, C, L)
+        x: (N, L, patch_size *C)
+        """
+        N, C, L = sig.shape
+        p = self.patch_embed.patch_size
+        assert L % p == 0
+        l = L // p
+        x = sig.reshape(shape=(N, C, l, p))
+        x = torch.einsum("nclp->nlpc", x)
+        x = x.reshape(shape=(N, l, p * C))
+        return x
 
-    def init_head(self, embed_dim, mlp_sizes):
-        pass
+    def unpatchify(self, x: torch.Tensor, C: int = 1, channel_last=True):
+        """
+        x: (N, L, patch_size*C)
+        x: (N, C, L)
+        """
+        N, L, _ = x.shape
+        p = self.patch_embed.patch_size
+        x = x.reshape(shape=(N, L, p, C))
+        if channel_last:
+            x = x.reshape(shape=(N, L * p, C))
+        else:
+            x = torch.einsum("nlpc->nclp", x)
+            x = x.reshape(shape=(N, C, L * p))
+        return x
 
-    def initialize_weights(self):
-        # initialization
-        # initialize (and freeze) pos_embed by sin-cos embedding
-        pos_embed = get_1d_sincos_pos_embed(
-            self.pos_embed.shape[-1], int(self.patch_embed.num_patches)
-        )
-        self.pos_embed.data.copy_(torch.from_numpy(pos_embed).float().unsqueeze(0))
-
-        decoder_pos_embed = get_1d_sincos_pos_embed(
-            self.decoder_pos_embed.shape[-1], int(self.patch_embed.num_patches)
-        )
-        self.decoder_pos_embed.data.copy_(
-            torch.from_numpy(decoder_pos_embed).float().unsqueeze(0)
-        )
-
-        # initialize patch_embed like nn.Linear (instead of nn.Conv2d)
-        w = self.patch_embed.proj.weight.data
-        torch.nn.init.xavier_uniform_(w.view([w.shape[0], -1]))
-
-        # timm's trunc_normal_(std=.02) is effectively normal_(std=0.02) as cutoff is too big (2.)
-        torch.nn.init.normal_(self.mask_token, std=0.02)
-
-        # initialize nn.Linear and nn.LayerNorm
-        self.apply(self._init_weights)
-
-    def random_masking(self, x, mask_ratio):
+    def random_masking(self, x: torch.Tensor, mask_ratio: float):
         """
         Perform per-sample random masking by per-sample shuffling.
         Per-sample shuffling is done by argsort random noise.
@@ -117,28 +141,26 @@ class VisionTransformerMAE1D(VisionTransformer1D):
         mask[:, :len_keep] = 0
         # unshuffle to get the binary mask
         mask = torch.gather(mask, dim=1, index=ids_restore)
-
         return x_masked, mask, ids_restore
 
-    def forward_encoder(self, x, mask_ratio):
-        # No cls token
-        # embed patches
+    def forward_encoder(self, x: torch.Tensor, mask_ratio: float):
         x = self.patch_embed(x)
+        x = self._pos_embed(x)
+        x = self.patch_drop(x)
+        x = self.norm_pre(x)
 
-        # add pos embed
-        x = x + self.pos_embed
+        # split cls token and rest
+        cls_token = x[:, :1, :]  # [B, 1, D]
+        x = x[:, 1:, :]  # [B, num_patches, D]
 
         # masking: length -> length * mask_ratio
         x, mask, ids_restore = self.random_masking(x, mask_ratio)
 
-        # apply Transformer blocks
-        for blk in self.blocks:
-            x = blk(x)
+        x = self.blocks(x)
         x = self.norm(x)
-
         return x, mask, ids_restore
 
-    def forward_decoder(self, x, ids_restore):
+    def forward_decoder(self, x: torch.Tensor, ids_restore: torch.Tensor):
         # embed tokens
         x = self.decoder_embed(x)
 
@@ -154,23 +176,22 @@ class VisionTransformerMAE1D(VisionTransformer1D):
         # add pos embed
         x = x + self.decoder_pos_embed
 
-        # apply Transformer blocks
-        for blk in self.decoder_blocks:
-            x = blk(x)
+        # apply decoder Transformer blocks
+        x = self.decoder_blocks(x)
         x = self.decoder_norm(x)
 
         # predictor projection
         x = self.decoder_pred(x)
-
         return x
 
-    def forward_loss(self, signals, pred, mask):
+    def forward_loss(self, x: torch.Tensor, pred: torch.Tensor, mask: torch.Tensor):
         """
-        signals: [N, 3, H, W]
+        x: [N, 1, L]
         pred: [N, L, p*p*3]
         mask: [N, L], 0 is keep, 1 is remove,
         """
-        target = self.patchify(signals)
+        target = self.patchify(x)
+
         if self.norm_pix_loss:
             mean = target.mean(dim=-1, keepdim=True)
             var = target.var(dim=-1, keepdim=True)
@@ -182,9 +203,40 @@ class VisionTransformerMAE1D(VisionTransformer1D):
         loss = (loss * mask).sum() / mask.sum()  # mean loss on removed patches
         return loss
 
-    def forward(self, signals, mask_ratio=0.75):
-        # signals = signals.transpose(1, 2)
-        latent, mask, ids_restore = self.forward_encoder(signals, mask_ratio)
+    def forward(self, x: torch.Tensor, mask_ratio: float = 0.75):
+        latent, mask, ids_restore = self.forward_encoder(x, mask_ratio)
         pred = self.forward_decoder(latent, ids_restore)  # [N, L, p*p*3]
-        loss = self.forward_loss(signals, pred, mask)
+        loss = self.forward_loss(x, pred, mask)
         return loss, pred, mask
+
+
+@register_model
+def vit_mae_1d_atto(
+    pretrained: bool = False,
+    pretrained_cfg: Optional[Dict[str, Any]] = None,
+    pretrained_cfg_overlay: Optional[Dict[str, Any]] = None,
+    cache_dir: Optional[str] = None,
+    **kwargs: Any,
+) -> nn.Module:
+    if pretrained_cfg is None:
+        pretrained_cfg = {}
+    if pretrained_cfg_overlay is None:
+        pretrained_cfg_overlay = {}
+    model = VisionTransformerMAE1D(
+        embed_dim=96,
+        depth=12,
+        num_heads=2,
+        decoder_embed_dim=128,
+        decoder_depth=8,
+        decoder_num_heads=16,
+        **kwargs,
+    )
+    if pretrained:
+        if pretrained_cfg_overlay.get("path", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
+        else:
+            pretrained_cfg["url"] = (
+                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
+            )
+        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+    return model
