@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2025-05-21 16:18:14
+LastEditTime: 2025-05-22 12:43:05
 FilePath: /MAECG/main_finetune.py
 Description: Finetune
 
@@ -52,7 +52,7 @@ def get_args_parser():
         type=int,
         help="Accumulate gradient iterations (for increasing the effective batch size under memory constraints)",
     )
-    parser.add_argument("--debug", action="store_true", default=False, type=int)
+    parser.add_argument("--debug", action="store_true", default=False)
 
     # Model parameters
     parser.add_argument(
@@ -255,10 +255,14 @@ def main(args):
 
     if args.eval:
         args.train_path = args.test_path
-    dataset_train = [torch.load(dataset) for dataset in args.train_path]
+    dataset_train = [
+        torch.load(dataset, weights_only=False) for dataset in args.train_path
+    ]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
-    dataset_val = [torch.load(dataset) for dataset in args.test_path]
+    dataset_val = [
+        torch.load(dataset, weights_only=False) for dataset in args.test_path
+    ]
     dataset_val = torch.utils.data.ConcatDataset(dataset_val)
 
     args.num_classes = dataset_val.datasets[0].num_classes
@@ -333,7 +337,7 @@ def main(args):
     model = create_model(args.model, num_classes=args.num_classes)
 
     if args.finetune and not args.eval:
-        checkpoint = torch.load(args.finetune, map_location="cpu")
+        checkpoint = torch.load(args.finetune, map_location="cpu", weights_only=False)
 
         print("Load pre-trained checkpoint from: %s" % args.finetune)
         checkpoint_model = checkpoint["model"]
@@ -359,7 +363,7 @@ def main(args):
         #     assert set(msg.missing_keys) == {'head.weight', 'head.bias'}
 
         # manually initialize fc layer
-        trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
+        trunc_normal_(model.head.weight, std=2e-5)
 
         if args.linear:
             # freeze all but the head

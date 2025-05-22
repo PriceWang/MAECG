@@ -2,8 +2,8 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2024-06-02 06:28:22
- * @FilePath: /guoxin/maecg/README.md
+ * @LastEditTime: 2025-05-22 14:57:30
+ * @FilePath: /MAECG/README.md
  * @Description:
  *
  * Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
@@ -40,7 +40,7 @@ This work is inspired by [Masked Autoencoders Are Scalable Vision Learners](http
 Install the required package:
 
 ```
-conda env create -n maecg --file environment.yml
+conda env create --file environment.yml
 ```
 
 Activate environment:
@@ -91,7 +91,7 @@ To pre-train ViT-Base (recommended default) with multi-node distributed training
 
 ```
 OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
-    --model mae_vit_base_patch32 \
+    --model vit_mae_1d_base \
     --batch_size 1024 \
     --epochs 200 \
     --accum_iter 1 \
@@ -104,7 +104,7 @@ OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=2 main_pretrain.py \
 ```
 
 - Here the effective batch size is 1024 (`batch_size` per gpu) \* 1 (nodes) \* 2 (gpus per node) \* 1 (`accum_iter`) = 2048.
-- To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge with different patch size, set `--model mae_vit_${model_size}_patch${patch_size}`.
+- To train ViT-Atto, ViT-Tiny, ViT-Small, ViT-Large or ViT-Huge, set `--model vit_mae_1d_${model_size}`.
 - Set `mask_ratio` for mask ratio.
 - Set `--data_path ${data_path_1} ${data_path_2} ...` to pre-train with multiple datasets
 - See [MAE pre-training](https://github.com/facebookresearch/mae/blob/main/PRETRAIN.md) for detailed parameter setting.
@@ -121,7 +121,7 @@ To fine-tune with multi-node distributed training, run the following command:
 
 ```
 OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
-    --model vit_base_p32 \
+    --model vit_1d_base \
     --batch_size 1024 \
     --lr 3e-4 \
     --epochs 200 \
@@ -144,7 +144,7 @@ Script for human identification:
 
 ```
 OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune.py \
-    --model vit_base_p32 \
+    --model vit_1d_base \
     --batch_size 32 \
     --lr 1e-3 \
     --epochs 200 \
@@ -166,7 +166,7 @@ Script for denoising:
 
 ```
 OMP_NUM_THREADS=20 torchrun --nnodes=1 --nproc-per-node=1 main_finetune_de.py \
-    --model mae_vit_base_patch32 \
+    --model vit_mae_1d_base \
     --batch_size 32 \
     --lr 1e-3 \
     --epochs 200 \
@@ -186,7 +186,7 @@ Evaluate arrhythmia classification on MITDB-DS1 (train + valid) and INCARTDB in 
 
 ```
 python main_finetune.py \
-    --model vit_base_p32 \
+    --model vit_1d_base \
     --resume ${finetune_ckpt} \
     --test_path ${MITDB_train_path} \
     ${MITDB_valid_path} \
@@ -198,7 +198,7 @@ Evaluate human identification on ECGIDDB (train + valid):
 
 ```
 python main_finetune.py \
-    --model vit_base_p32 \
+    --model vit_1d_base \
     --resume ${finetune_ckpt} \
     --test_path ${ECGIDDB_train_path} \
     ${ECGIDDB_valid_path} \

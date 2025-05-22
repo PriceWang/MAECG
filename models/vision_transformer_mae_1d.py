@@ -232,13 +232,12 @@ def vit_mae_1d_atto(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
 
 
@@ -264,13 +263,12 @@ def vit_mae_1d_tiny(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
 
 
@@ -296,13 +294,12 @@ def vit_mae_1d_small(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
 
 
@@ -328,13 +325,12 @@ def vit_mae_1d_base(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
 
 
@@ -360,13 +356,12 @@ def vit_mae_1d_large(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model
 
 
@@ -392,11 +387,10 @@ def vit_mae_1d_huge(
         **kwargs,
     )
     if pretrained:
-        if pretrained_cfg_overlay.get("path", None):
-            pretrained_cfg["file"] = pretrained_cfg_overlay["path"]
-        else:
-            pretrained_cfg["url"] = (
-                "https://huggingface.co/PriceWang/model/resolve/main/dmmecg/vit_tiny_af.pth"
-            )
-        load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        if pretrained_cfg_overlay.get("file", None):
+            pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+        elif pretrained_cfg_overlay.get("url", None):
+            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
+            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
     return model

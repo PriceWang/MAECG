@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2025-05-21 16:17:46
+LastEditTime: 2025-05-22 11:33:28
 FilePath: /MAECG/main_pretrain.py
 Description: Pretrain
 
@@ -176,7 +176,9 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = [torch.load(dataset) for dataset in args.data_path]
+    dataset_train = [
+        torch.load(dataset, weights_only=False) for dataset in args.data_path
+    ]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
     print(f"len of the dataset {len(dataset_train)}")
