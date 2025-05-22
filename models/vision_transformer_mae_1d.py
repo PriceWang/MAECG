@@ -6,6 +6,7 @@ import torch.nn as nn
 from timm.layers import LayerType, get_norm_layer
 from timm.models import load_pretrained, register_model
 from timm.models.vision_transformer import Block
+from torch.hub import load_state_dict_from_url
 
 from .vision_transformer_1d import VisionTransformer1D
 
@@ -236,8 +237,10 @@ def vit_mae_1d_atto(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -267,8 +270,10 @@ def vit_mae_1d_tiny(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -298,8 +303,10 @@ def vit_mae_1d_small(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -329,8 +336,10 @@ def vit_mae_1d_base(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -360,8 +369,10 @@ def vit_mae_1d_large(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -391,6 +402,8 @@ def vit_mae_1d_huge(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model

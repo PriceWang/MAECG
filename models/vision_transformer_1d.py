@@ -2,7 +2,7 @@
 Author: Guoxin Wang
 Date: 2025-05-20 13:08:01
 LastEditors: Guoxin Wang
-LastEditTime: 2025-05-22 12:33:05
+LastEditTime: 2025-05-22 15:16:12
 FilePath: /MAECG/models/vision_transformer_1d.py
 Description:
 
@@ -28,6 +28,7 @@ from timm.layers import (
 from timm.layers.format import Format
 from timm.models import load_pretrained, named_apply, register_model
 from timm.models.vision_transformer import Block, get_init_weights_vit, global_pool_nlc
+from torch.hub import load_state_dict_from_url
 
 try:
     from typing import Literal
@@ -379,8 +380,10 @@ def vit_1d_atto(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -407,8 +410,10 @@ def vit_1d_tiny(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -435,8 +440,10 @@ def vit_1d_small(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -463,8 +470,10 @@ def vit_1d_base(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -491,8 +500,10 @@ def vit_1d_large(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
 
 
@@ -519,6 +530,8 @@ def vit_1d_huge(
             pretrained_cfg["file"] = pretrained_cfg_overlay["file"]
             load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
         elif pretrained_cfg_overlay.get("url", None):
-            pretrained_cfg["url"] = pretrained_cfg_overlay["url"]
-            load_pretrained(model, pretrained_cfg, strict=False, cache_dir=cache_dir)
+            checkpoint = load_state_dict_from_url(
+                pretrained_cfg_overlay["url"], map_location="cpu", progress=True
+            )
+            model.load_state_dict(checkpoint, strict=True)
     return model
