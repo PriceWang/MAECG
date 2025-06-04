@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-02-11 04:41:20
-FilePath: /mae/engine_pretrain.py
-Description: 
+LastEditTime: 2025-05-21 16:20:13
+FilePath: /MAECG/engine_pretrain.py
+Description:
 
-Copyright (c) 2023 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2023 by Guoxin Wang, All Rights Reserved.
 """
 
 import math
@@ -58,7 +58,7 @@ def train_one_epoch(
         if len(samples.shape) == 2:
             samples = samples.unsqueeze(1)
 
-        with torch.cuda.amp.autocast():
+        with torch.amp.autocast(device.type):
             loss, _, _ = model(samples, mask_ratio=args.mask_ratio)
 
         loss_value = loss.item()

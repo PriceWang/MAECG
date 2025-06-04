@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-23 18:15:10
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-04 08:50:20
-FilePath: /guoxin/maecg/main_finetune_de.py
+LastEditTime: 2025-05-22 13:59:49
+FilePath: /MAECG/main_finetune_de.py
 Description: Finetune with decoder
 
-Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 """
 
 import argparse
@@ -19,12 +19,14 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-import utils.lr_decay as lrd
-import utils.misc as misc
-import vit_mae
-from engine_finetune_de import train_one_epoch
+from timm.models import create_model
 from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
+
+import models
+import utils.lr_decay as lrd
+import utils.misc as misc
+from engine_finetune_de import train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
@@ -47,6 +49,7 @@ def get_args_parser():
         type=int,
         help="Accumulate gradient iterations (for increasing the effective batch size under memory constraints)",
     )
+    parser.add_argument("--debug", action="store_true", default=False)
 
     # Model parameters
     parser.add_argument(
@@ -120,10 +123,6 @@ def get_args_parser():
         default=False,
         help="linear probing",
     )
-    # parser.add_argument('--global_pool', action='store_true')
-    # parser.set_defaults(global_pool=True)
-    # parser.add_argument('--cls_token', action='store_false', dest='global_pool',
-    #                     help='Use class token instead of global pool for classification')
 
     # Dataset parameters
     parser.add_argument(
@@ -194,8 +193,14 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = [torch.load(dataset) for dataset in args.train_path]
+    dataset_train = [
+        torch.load(dataset, weights_only=False) for dataset in args.train_path
+    ]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
+
+    if args.debug:
+        dataset_train = torch.utils.data.Subset(dataset_train, range(2000))
+        print("Debug mode: using 1000 samples for training")
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -222,36 +227,17 @@ def main(args):
         drop_last=True,
     )
 
-    model = vit_mae.__dict__[args.model]()
+    model = create_model(args.model)
 
     if args.finetune:
-        checkpoint = torch.load(args.finetune, map_location="cpu")
+        checkpoint = torch.load(args.finetune, map_location="cpu", weights_only=False)
 
         print("Load pre-trained checkpoint from: %s" % args.finetune)
         checkpoint_model = checkpoint["model"]
-        # state_dict = model.state_dict()
-        # for k in ["head.weight", "head.bias"]:
-        #     if (
-        #         k in checkpoint_model
-        #         and checkpoint_model[k].shape != state_dict[k].shape
-        #     ):
-        #         print(f"Removing key {k} from pretrained checkpoint")
-        #         del checkpoint_model[k]
-
-        # interpolate position embedding
-        interpolate_pos_embed(model, checkpoint_model)
 
         # load pre-trained model
         msg = model.load_state_dict(checkpoint_model, strict=False)
         print(msg)
-
-        # if args.global_pool:
-        #     assert set(msg.missing_keys) == {'head.weight', 'head.bias', 'fc_norm.weight', 'fc_norm.bias'}
-        # else:
-        #     assert set(msg.missing_keys) == {'head.weight', 'head.bias'}
-
-        # manually initialize fc layer
-        # trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
 
         if args.linear:
             # freeze all but the decoder

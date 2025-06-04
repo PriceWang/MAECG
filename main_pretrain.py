@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-30 13:16:08
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-03 15:11:55
-FilePath: /15206140/MAECG/main_pretrain.py
+LastEditTime: 2025-05-22 11:33:28
+FilePath: /MAECG/main_pretrain.py
 Description: Pretrain
 
-Copyright (c) 2023 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2023 by Guoxin Wang, All Rights Reserved.
 """
 
 import argparse
@@ -22,11 +22,13 @@ import numpy as np
 import timm.optim.optim_factory as optim_factory
 import torch
 import torch.backends.cudnn as cudnn
-import utils.misc as misc
-import vit_mae
-from engine_pretrain import train_one_epoch
+from timm.models import create_model
 from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
+
+import models
+import utils.misc as misc
+from engine_pretrain import train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 
@@ -46,6 +48,7 @@ def get_args_parser():
         type=int,
         help="Accumulate gradient iterations (for increasing the effective batch size under memory constraints)",
     )
+    parser.add_argument("--debug", action="store_true", default=False)
 
     # Model parameters
     parser.add_argument(
@@ -173,9 +176,16 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train = [torch.load(dataset) for dataset in args.data_path]
+    dataset_train = [
+        torch.load(dataset, weights_only=False) for dataset in args.data_path
+    ]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
+
     print(f"len of the dataset {len(dataset_train)}")
+
+    if args.debug:
+        dataset_train = torch.utils.data.Subset(dataset_train, range(2000))
+        print("Debug mode: using 1000 samples for training")
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -203,7 +213,7 @@ def main(args):
     )
 
     # define the model
-    model = vit_mae.__dict__[args.model](norm_pix_loss=args.norm_pix_loss)
+    model = create_model(args.model, norm_pix_loss=args.norm_pix_loss)
 
     model.to(device)
 
@@ -238,8 +248,12 @@ def main(args):
         model_without_ddp = model.module
 
     # following timm: set wd as 0 for bias and norm layers
-    param_groups = optim_factory.add_weight_decay(model_without_ddp, args.weight_decay)
-    optimizer = torch.optim.AdamW(param_groups, lr=args.lr, betas=(0.9, 0.95))
+    optimizer = torch.optim.AdamW(
+        model_without_ddp.parameters(),
+        lr=args.lr,
+        betas=(0.9, 0.95),
+        weight_decay=args.weight_decay,
+    )
     print(optimizer)
     loss_scaler = NativeScaler()
 

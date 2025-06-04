@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-04-08 09:14:54
-FilePath: /guoxin/maecg/main_finetune.py
+LastEditTime: 2025-05-22 12:43:05
+FilePath: /MAECG/main_finetune.py
 Description: Finetune
 
-Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 """
 
 import argparse
@@ -19,17 +19,19 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-import utils.lr_decay as lrd
-import utils.misc as misc
-import vit_mae
-from engine_finetune import evaluate, train_one_epoch
 from timm.data.mixup import Mixup
 from timm.loss import SoftTargetCrossEntropy
+from timm.models import create_model
 
 # assert timm.__version__ == "0.3.2" # version check
 from timm.models.layers import trunc_normal_
 from timm.utils import ModelEma
 from torch.utils.tensorboard import SummaryWriter
+
+import models
+import utils.lr_decay as lrd
+import utils.misc as misc
+from engine_finetune import evaluate, train_one_epoch
 from utils.misc import NativeScalerWithGradNormCount as NativeScaler
 from utils.misc import str2bool
 from utils.pos_embed import interpolate_pos_embed
@@ -50,6 +52,7 @@ def get_args_parser():
         type=int,
         help="Accumulate gradient iterations (for increasing the effective batch size under memory constraints)",
     )
+    parser.add_argument("--debug", action="store_true", default=False)
 
     # Model parameters
     parser.add_argument(
@@ -252,13 +255,22 @@ def main(args):
 
     if args.eval:
         args.train_path = args.test_path
-    dataset_train = [torch.load(dataset) for dataset in args.train_path]
+    dataset_train = [
+        torch.load(dataset, weights_only=False) for dataset in args.train_path
+    ]
     dataset_train = torch.utils.data.ConcatDataset(dataset_train)
 
-    dataset_val = [torch.load(dataset) for dataset in args.test_path]
+    dataset_val = [
+        torch.load(dataset, weights_only=False) for dataset in args.test_path
+    ]
     dataset_val = torch.utils.data.ConcatDataset(dataset_val)
 
-    args.num_class = dataset_val.datasets[0].num_class
+    args.num_classes = dataset_val.datasets[0].num_classes
+
+    if args.debug:
+        dataset_train = torch.utils.data.Subset(dataset_train, range(2000))
+        dataset_val = torch.utils.data.Subset(dataset_val, range(2000))
+        print("Debug mode: using 1000 samples for training")
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -319,16 +331,13 @@ def main(args):
             switch_prob=args.mixup_switch_prob,
             mode=args.mixup_mode,
             label_smoothing=args.smoothing,
-            num_classes=args.num_class,
+            num_classes=args.num_classes,
         )
 
-    model = vit_mae.__dict__[args.model](
-        mlp_sizes=[args.num_class],
-        # global_pool=args.global_pool,
-    )
+    model = create_model(args.model, num_classes=args.num_classes)
 
     if args.finetune and not args.eval:
-        checkpoint = torch.load(args.finetune, map_location="cpu")
+        checkpoint = torch.load(args.finetune, map_location="cpu", weights_only=False)
 
         print("Load pre-trained checkpoint from: %s" % args.finetune)
         checkpoint_model = checkpoint["model"]
@@ -354,7 +363,7 @@ def main(args):
         #     assert set(msg.missing_keys) == {'head.weight', 'head.bias'}
 
         # manually initialize fc layer
-        trunc_normal_(model.head[2].layers[0].weight, std=2e-5)
+        trunc_normal_(model.head.weight, std=2e-5)
 
         if args.linear:
             # freeze all but the head

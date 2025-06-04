@@ -2,11 +2,11 @@
 Author: Guoxin Wang
 Date: 2023-07-01 16:36:58
 LastEditors: Guoxin Wang
-LastEditTime: 2024-03-06 16:52:49
-FilePath: /maecg/engine_finetune.py
-Description: 
+LastEditTime: 2025-05-21 16:20:29
+FilePath: /MAECG/engine_finetune.py
+Description:
 
-Copyright (c) 2024 by Guoxin Wang, All Rights Reserved. 
+Copyright (c) 2024 by Guoxin Wang, All Rights Reserved.
 """
 
 import math
@@ -66,7 +66,7 @@ def train_one_epoch(
         if mixup_fn is not None:
             samples, targets = mixup_fn(samples, targets)
 
-        with torch.cuda.amp.autocast():
+        with torch.amp.autocast(device.type):
             outputs = model(samples)
             loss = criterion(outputs, targets)
 
@@ -135,7 +135,7 @@ def evaluate(data_loader, model, device):
         target = target.to(device, non_blocking=True)
 
         # compute output
-        with torch.cuda.amp.autocast():
+        with torch.amp.autocast(device.type):
             output = model(samples)
             loss = criterion(output, target)
 
