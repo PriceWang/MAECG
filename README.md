@@ -2,7 +2,7 @@
  * @Author: Guoxin Wang
  * @Date: 2024-01-11 16:50:18
  * @LastEditors: Guoxin Wang
- * @LastEditTime: 2025-05-22 14:57:30
+ * @LastEditTime: 2026-04-23 11:22:48
  * @FilePath: /MAECG/README.md
  * @Description:
  *
@@ -12,7 +12,7 @@
 ## MAECG: A PyTorch Implementation
 
 <p align="center">
-  <img src="https://github.com/PriceWang/MAECG/assets/30796250/48680d87-065e-4708-bb3b-3b1dc1835868" width="1080">
+  <img src="https://private-user-images.githubusercontent.com/30796250/582603748-70758a47-1869-4d07-9b04-38433b3f5ea7.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzY5NDAwNTAsIm5iZiI6MTc3NjkzOTc1MCwicGF0aCI6Ii8zMDc5NjI1MC81ODI2MDM3NDgtNzA3NThhNDctMTg2OS00ZDA3LTliMDQtMzg0MzNiM2Y1ZWE3LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjA0MjMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwNDIzVDEwMjIzMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPThmY2RjNmI0MzE3ZGJmMDAwMTRlYjQ0Yzk2ZTNhNmVkZGUyYTQyMThkZDg4MjVlMjE0MmFkNGRiZGUzNGRhOWEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnJlc3BvbnNlLWNvbnRlbnQtdHlwZT1pbWFnZSUyRnBuZyJ9.4wcV-C1nsHB4xhwI7nZp_cX-OSJmsBWFJDV0InIlejU" width="1080">
 </p>
 
 This is a PyTorch/GPU implementation of the paper [A Task-Generic High-Performance Unsupervised Pre-training Framework for ECG](https://ieeexplore.ieee.org/document/10541906):
